@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, render_template, render_template_string
+from flask import Flask, redirect, url_for, render_template, render_template_string, abort, request
 
 app = Flask(__name__, static_folder='static')
 
@@ -110,9 +110,6 @@ def lab2_menu():
             </ul>
             <ul>
                 <li><a href="/lab2/flowers">/lab2/flowers-Цветы</a></li>
-            </ul>
-            <ul>
-                <li><a href="/lab2/add_flower/">/lab2/add_flower/-Добавление цветов</a></li>
             </ul>
         </nav>
         <footer>
@@ -241,46 +238,11 @@ def a():
 def a2():
     return 'со слэшем'
 
-flower_list = ['Роза', 'Тюльпан', 'Незабудка', 'Ромашка']
-
-@app.route('/lab2/flowers/<int:flower_id>')
-def flowers(flower_id):
-    if flower_id >= len(flower_list):
-        return "Такого цветка нет", 404
-    else:
-        return render_template_string('''
-<!doctype html>
-<html>
-    <body>
-        <h1>Цветок: {{ flower_name }}</h1>
-        <a href="/lab2/flowers">Посмотреть все цветы</a>
-    </body>
-</html>
-''', flower_name=flower_list[flower_id])
-
-@app.route('/lab2/add_flower/<name>')
-def add_flower(name):
-    flower_list.append(name)
-    return render_template_string('''
-<!doctype html>
-<html>
-    <body>
-        <h1>Добавлен новый цветок</h1>
-        <p>Название нового цветка: {{ name }}</p>
-        <p>Всего цветов: {{ count }}</p>
-        <ol>
-            {% for flower in flowers %}
-                <li>{{ flower }}</li>
-            {% endfor %}
-        </ol>
-        <a href="/lab2/flowers">Посмотреть все цветы</a>
-    </body>
-</html>
-''', name=name, count=len(flower_list), flowers=flower_list)
-
-@app.route('/lab2/add_flower/')
-def add_flower_no_name():
-    return "Вы не задали имя цветка", 400
+flower_list = [
+    {"name": "Роза", "price": 100},
+    {"name": "Тюльпан", "price": 50},
+    {"name": "Лилия", "price": 80}
+]
 
 @app.route('/lab2/flowers')
 def list_flowers():
@@ -291,27 +253,42 @@ def list_flowers():
         <h1>Список всех цветов</h1>
         <ol>
             {% for flower in flowers %}
-                <li>{{ flower }}</li>
+                <li>
+                    {{ flower.name }} - {{ flower.price }} руб.
+                    <a href="{{ url_for('delete_flower', index=loop.index0) }}">Удалить</a>
+                </li>
             {% endfor %}
         </ol>
         <p>Всего цветов: {{ count }}</p>
-        <a href="/lab2/clear_flowers">Очистить список цветов</a>
+        <form action="{{ url_for('add_flower') }}" method="post">
+            <input type="text" name="name" placeholder="Название цветка" required>
+            <input type="number" name="price" placeholder="Цена цветка" required>
+            <button type="submit">Добавить цветок</button>
+        </form>
+        <a href="{{ url_for('clear_flowers') }}">Очистить список цветов</a>
     </body>
 </html>
 ''', flowers=flower_list, count=len(flower_list))
 
+@app.route('/lab2/add_flower', methods=['POST'])
+def add_flower():
+    name = request.form['name']
+    price = request.form['price']
+    flower_list.append({"name": name, "price": price})
+    return redirect(url_for('list_flowers'))
+
+@app.route('/lab2/delete_flower/<int:index>')
+def delete_flower(index):
+    if index < 0 or index >= len(flower_list):
+        abort(404)
+    flower_list.pop(index)
+    return redirect(url_for('list_flowers'))
+
 @app.route('/lab2/clear_flowers')
 def clear_flowers():
     flower_list.clear()
-    return render_template_string('''
-<!doctype html>
-<html>
-    <body>
-        <h1>Список цветов очищен</h1>
-        <a href="/lab2/flowers">Посмотреть все цветы</a>
-    </body>
-</html>
-''')
+    return redirect(url_for('list_flowers'))
+
 
 @app.route('/lab2/example')
 def example():
