@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ягоды</title>
+</head>
+<body>
+    <h1>Список ягод</h1>
+    <div>
+        {% for obj in objects %}
+            <div>
+                <h2>{{ obj.name }}</h2>
+                <img src="{{ obj.image }}" alt="{{ obj.name }}" style="width: 200px;">
+                <p>{{ obj.description }}</p>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

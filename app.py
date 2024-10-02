@@ -262,3 +262,34 @@ books = [
 def books_list():
     return render_template('books_list.html', books=books)
 
+objects = [
+    {
+        'name': 'Яблоко',
+        'image': '/static/apple.jpg',
+        'description': 'Сочный и сладкий фрукт, богатый витаминами.'
+    },
+    {
+        'name': 'Груша',
+        'image': '/static/pear.jpg',
+        'description': 'Сладкий и сочный фрукт с нежной мякотью.'
+    },
+    {
+        'name': 'Вишня',
+        'image': '/static/cherry.jpg',
+        'description': 'Кислая, но очень вкусная ягода, любимая многими.'
+    },
+    {
+        'name': 'Клубника',
+        'image': '/static/strawberry.webp',
+        'description': 'Сладкая и ароматная ягода, символ лета.'
+    },
+    {
+        'name': 'Смородина',
+        'image': '/static/currant.webp',
+        'description': 'Кислая ягода, богатая витаминами C и P.'
+    }
+]
+
+@app.route('/lab2/objects')
+def show_objects():
+    return render_template('objects.html', objects=objects)
