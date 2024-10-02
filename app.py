@@ -23,6 +23,9 @@ def menu():
             <ul>
                 <li><a href="/lab1">Первая лабораторная</a></li>
             </ul>
+            <ul>
+                <li><a href="/lab2">Вторая лабораторная</a></li>
+            </ul>
         </nav>
         <footer>
             &copy; Кузьменко Екатерина, ФБИ-23, 3 курс, 2024
@@ -58,6 +61,52 @@ def lab1():
             </ul>
             <ul>
                 <li><a href="/lab1/book">/lab1/book-Книга</a></li>
+            </ul>
+        </nav>
+        <footer>
+            &copy; Кузьменко Екатерина, ФБИ-23, 3 курс, 2024
+        </footer>
+    </body>
+</html>
+"""
+@app.route("/lab2")
+def lab2_menu():
+    return """
+<!doctype html>
+<html>
+    <head>
+        <title>НГТУ, ФБ, Лабораторные работы</title>
+    </head> 
+    <body>
+        <p>НГТУ, ФБ, Лабораторная работа 2</p>
+       
+        <a href="/menu">Меню</a>
+        
+        <h2>Реализованные роуты</h2>
+        <nav>
+            <ul>
+                <li><a href="/lab2/a">/lab2/a-Без слэша</a></li>
+            </ul>
+            <ul>
+                <li><a href="/lab2/a/">/lab2/a/-Со слэшем</a></li>
+            </ul>
+            <ul>
+                <li><a href="/lab2/flowers/<int:flower_id>">/lab2/flowers/<int:flower_id>-Цветы</a></li>
+            </ul>
+            <ul>
+                <li><a href="/lab2/example">/lab2/example-Настройки</a></li>
+            </ul>
+            <ul>
+                <li><a href="/lab2/filters">/lab2/filters-Фильтры</a></li>
+            </ul>
+            <ul>
+                <li><a href="/lab2/calc/">/lab2/calc/-Калькулятор</a></li>
+            </ul>
+            <ul>
+                <li><a href="/lab2/books">/lab2/books-Книги</a></li>
+            </ul>
+            <ul>
+                <li><a href="/lab2/objects">/lab2/objects-Ягоды</a></li>
             </ul>
         </nav>
         <footer>
@@ -293,3 +342,4 @@ objects = [
 @app.route('/lab2/objects')
 def show_objects():
     return render_template('objects.html', objects=objects)
+
