@@ -244,3 +244,21 @@ def calc_one_number(a):
 @app.route('/lab2/calc/<int:a>/<int:b>')
 def calc(a, b):
     return render_template('calc.html', a=a, b=b)
+
+books = [
+    {'author': 'Джон Гришэм', 'title': 'Время убивать', 'genre': 'Детектив', 'pages': 480},
+    {'author': 'Стивен Кинг', 'title': 'Сияние', 'genre': 'Ужасы', 'pages': 451},
+    {'author': 'Дэн Браун', 'title': 'Код да Винчи', 'genre': 'Триллеры', 'pages': 544},
+    {'author': 'Джоан Роулинг', 'title': 'Гарри Поттер и философский камень', 'genre': 'Фэнтези', 'pages': 309},
+    {'author': 'Эрих Мария Ремарк', 'title': 'Три товарища', 'genre': 'Роман', 'pages': 384},
+    {'author': 'Толстой Лев Николаевич', 'title': 'Война и мир', 'genre': 'Роман', 'pages': 1225},
+    {'author': 'Фрэнк Герберт', 'title': 'Дюна', 'genre': 'Научная фантастика', 'pages': 607},
+    {'author': 'Артур Конан Дойл', 'title': 'Собака Баскервилей', 'genre': 'Детектив', 'pages': 256},
+    {'author': 'Джоан Роулинг', 'title': 'Гарри Поттер и Тайная комната', 'genre': 'Фэнтези', 'pages': 341},
+    {'author': 'Оскар Уайльд', 'title': 'Портрет Дориана Грея', 'genre': 'Роман', 'pages': 320},
+]
+
+@app.route('/lab2/books')
+def books_list():
+    return render_template('books_list.html', books=books)
+
