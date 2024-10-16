@@ -72,3 +72,33 @@ def pay():
 def success():
     price = request.args.get('price', 0)
     return render_template ('lab3/success.html', price=price)
+
+
+@lab3.route('/lab3/settings', methods=['GET', 'POST'])
+def settings():
+    if request.method == 'POST':
+        color = request.form.get('color')
+        background = request.form.get('background')
+        size = request.form.get('size')
+        font_style = request.form.get('font-style')
+
+        resp = make_response(redirect('/lab3/settings'))
+
+        if color:
+            resp.set_cookie('color', color)
+        if background:
+            resp.set_cookie('background', background)
+        if size:
+            resp.set_cookie('size', size)
+        if font_style: 
+            resp.set_cookie('font-style', font_style)
+
+        return resp
+
+    background = request.cookies.get('background')
+    color = request.cookies.get('color')
+    size = request.cookies.get('size')
+    font_style = request.cookies.get('font-style')
+
+    return make_response(render_template('lab3/settings.html', color=color, 
+                                         background=background, size=size, font_style=font_style))

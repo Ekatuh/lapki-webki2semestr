@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block lab %} Лабораторная работа 3 {% endblock %}
+
+{% block main %}
+    <h1>Cookies</h1>
+    <form method="post">
+        <div>
+            <label for="color">Выберите цвет текста:</label>
+            <input type="color" id="color" name="color" value="{{color or ''}}">
+        </div>
+
+        <div>
+            <label for="background">Выберите цвет фона:</label>
+            <input type="color" id="background" name="background" value="{{background or ''}}">
+        </div>
+
+        <div>
+            <label for="size">Выберите размер текста:</label>
+            <input type="range" id="size" name="size" min="10" max="100" value="{{size or 20}}">
+        </div>
+
+        <div>
+            <label for="font-style">Выберите стиль шрифта:</label>
+            <select id="font-style" name="font-style">
+                <option value="normal" {% if font_style == 'normal' %}selected{% endif %}>Нормальный</option>
+                <option value="italic" {% if font_style == 'italic' %}selected{% endif %}>Курсив</option>
+                <option value="bold" {% if font_style == 'bold' %}selected{% endif %}>Жирный</option>
+            </select>
+        </div>
+        </div>
+
+        <div>
+            <button type="submit">Ok</button>
+        </div>
+    </form>
+    
+
+{% endblock %}
