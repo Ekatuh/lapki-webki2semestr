@@ -1,0 +1,89 @@
+<style>
+    .container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    
+    .price {
+        font-size: 1.2em;
+        margin-bottom: 20px;
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+    
+    .btn-primary {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-right: 10px;
+    }
+    
+    .btn-primary:hover {
+        background-color: #45a049;
+    }
+    
+    .btn-secondary {
+        background-color: #f44336;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #d32f2f;
+    }
+</style>
+
+{% extends "base.html" %}
+
+{% block lab %} Лабораторная работа 3 {% endblock %}
+
+{% block main %}
+    <div class="container">
+        <h1>Оплата</h1>
+
+        <div class="price">Сумма к оплате: {{ price }}</div>
+
+        <form action="/lab3/success" class="payment-form">
+            <input type="hidden" name="price" value="{{ price }}">
+
+            <div class="form-group">
+                <label for="card">Номер банковской карты:</label>
+                <input type="text" name="card" pattern="\d{16}" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="name">Имя держателя карты:</label>
+                <input type="text" name="name" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="cvv">Номер CVV:</label>
+                <input type="text" name="cvv" size="3" pattern="\d{3}" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Оплатить</button>
+                <a href="/lab3/order" class="btn btn-secondary">Вернуться назад</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

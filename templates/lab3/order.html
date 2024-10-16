@@ -1,0 +1,79 @@
+<style>
+    .container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .radio-group label,
+    .checkbox-group label {
+        display: block;
+        margin-bottom: 5px;
+    }
+    
+    .btn-primary {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+    .btn-primary:hover {
+        background-color: #45a049;
+    }    
+</style>
+{% extends "base.html" %}
+
+{% block lab %} Лабораторная работа 3 {% endblock %}
+
+{% block main %}
+    <div class="container">
+        <h1>Заказ напитка</h1>
+        <form action="/lab3/pay" class="order-form">
+            <div class="form-group">
+                <label for="drink">Напиток:</label>
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" name="drink" value="coffee" checked>
+                        Кофе - 120 рублей
+                    </label>
+                    <label>
+                        <input type="radio" name="drink" value="black-tea">
+                        Черный чай - 80 рублей
+                    </label>
+                    <label>
+                        <input type="radio" name="drink" value="green-tea">
+                        Зеленый чай - 70 рублей
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="add-ons">Добавки:</label>
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" name="milk">
+                        Молоко + 30 рублей
+                    </label>
+                    <label>
+                        <input type="checkbox" name="sugar">
+                        Сахар + 10 рублей
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Заказать</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+

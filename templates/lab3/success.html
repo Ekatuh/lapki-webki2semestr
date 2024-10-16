@@ -1,0 +1,36 @@
+<style>
+    .container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        text-align: center; /* Выравнивание текста по центру */
+    }
+    
+    .btn-primary {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+    .btn-primary:hover {
+        background-color: #45a049;
+    }
+</style>
+
+{% extends "base.html" %}
+
+{% block lab %} Лабораторная работа 3 {% endblock %}
+
+{% block main %}
+    <div class="container">
+        <h1>Спасибо, ваш заказ оплачен на сумму {{price}} рублей, ожидайте доставку!</h1>
+        <div class="form-group">
+            <a href="/lab3/order" class="btn btn-primary">Вернуться назад к оформлению заказа</a>
+        </div>
+    </div>
+{% endblock %}
