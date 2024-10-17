@@ -114,7 +114,7 @@ def settings():
 @lab3.route('/lab3/bilet', methods=['GET', 'POST'])
 def bilet():
     if request.method == 'POST':
-        # Получаем данные из формы
+        
         fio = request.form['fio']
         polka = request.form['polka']
         belyo = request.form.get('belyo')
@@ -125,13 +125,11 @@ def bilet():
         data_poezdki = request.form['data_poezdki']
         strahovka = request.form.get('strahovka')
 
-        # Проверяем валидность данных
         if not all([fio, polka, vozrast, punkt_vyezda, punkt_naznacheniya, data_poezdki]):
-            return render_template('index.html', error='Заполните все поля!')
+            return render_template('lab3/bilet.html', error='Заполните все поля!')
         if vozrast < 1 or vozrast > 120:
-            return render_template('index.html', error='Некорректный возраст!')
+            return render_template('lab3/bilet.html', error='Некорректный возраст!')
 
-        # Рассчитываем стоимость билета
         cena = 1000 if vozrast >= 18 else 700
         if polka in ('нижняя', 'нижняя боковая'):
             cena += 100
