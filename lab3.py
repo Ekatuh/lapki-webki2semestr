@@ -109,3 +109,47 @@ def settings():
 
     return make_response(render_template('lab3/settings.html', color=color, 
                                          background=background, size=size, font_style=font_style))
+
+
+@lab3.route('/lab3/bilet', methods=['GET', 'POST'])
+def bilet():
+    if request.method == 'POST':
+        # Получаем данные из формы
+        fio = request.form['fio']
+        polka = request.form['polka']
+        belyo = request.form.get('belyo')
+        bagazh = request.form.get('bagazh')
+        vozrast = int(request.form['vozrast'])
+        punkt_vyezda = request.form['punkt_vyezda']
+        punkt_naznacheniya = request.form['punkt_naznacheniya']
+        data_poezdki = request.form['data_poezdki']
+        strahovka = request.form.get('strahovka')
+
+        # Проверяем валидность данных
+        if not all([fio, polka, vozrast, punkt_vyezda, punkt_naznacheniya, data_poezdki]):
+            return render_template('index.html', error='Заполните все поля!')
+        if vozrast < 1 or vozrast > 120:
+            return render_template('index.html', error='Некорректный возраст!')
+
+        # Рассчитываем стоимость билета
+        cena = 1000 if vozrast >= 18 else 700
+        if polka in ('нижняя', 'нижняя боковая'):
+            cena += 100
+        if belyo:
+            cena += 75
+        if bagazh:
+            cena += 250
+        if strahovka:
+            cena += 150
+
+        
+        return render_template('lab3/ofrmbilet.html', fio=fio, polka=polka, belyo=belyo, bagazh=bagazh, vozrast=vozrast, 
+                               punkt_vyezda=punkt_vyezda, punkt_naznacheniya=punkt_naznacheniya, 
+                               data_poezdki=data_poezdki, strahovka=strahovka, cena=cena)
+
+    else:
+        return render_template('lab3/bilet.html')
+
+@lab3.route('/lab3/ofrmbilet')
+def ofrmbilet():
+    return render_template('lab3/ofrmbilet.html')
