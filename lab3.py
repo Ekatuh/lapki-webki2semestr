@@ -101,6 +101,13 @@ def settings():
             resp.set_cookie('font-style', font_style)
 
         return resp
+    if request.method == 'DELETE':
+        resp = make_response(redirect('/lab3/settings'))
+        resp.delete_cookie('color')
+        resp.delete_cookie('background')
+        resp.delete_cookie('size')
+        resp.delete_cookie('font-style')
+        return resp
 
     background = request.cookies.get('background')
     color = request.cookies.get('color')
@@ -109,6 +116,15 @@ def settings():
 
     return make_response(render_template('lab3/settings.html', color=color, 
                                          background=background, size=size, font_style=font_style))
+
+@lab3.route('/lab3/clear_cookies', methods=['POST'])
+def clear_cookies():
+    resp = make_response(redirect('/lab3/settings'))
+    resp.delete_cookie('color')
+    resp.delete_cookie('background')
+    resp.delete_cookie('size')
+    resp.delete_cookie('font-style')
+    return resp
 
 
 @lab3.route('/lab3/bilet', methods=['GET', 'POST'])
