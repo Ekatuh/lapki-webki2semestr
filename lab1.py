@@ -46,11 +46,11 @@ def oak():
 <html> 
     <head>
         <title>НГТУ, ФБ, Лабораторные работы</title>
-        <link rel="stylesheet" href="''' + url_for('static', filename='lab1.css') + '''"> 
+        <link rel="stylesheet" href="''' + url_for('static', filename='lab1/lab1.css') + '''"> 
     </head>
     <body>
         <h1>Дуб</h1>
-        <img src="'''+url_for('static', filename='oak.webp')+'''">
+        <img src="''' + url_for('static', filename='lab1/oak.webp') + '''">
 
         <footer>
             &copy; Кузьменко Екатерина, ФБИ-23, 3 курс, 2024
@@ -67,11 +67,11 @@ def student():
 <html> 
     <head>
         <title>НГТУ, ФБ, Лабораторные работы</title>
-        <link rel="stylesheet" href="''' + url_for('static', filename='lab1.css') + '''"> 
+        <link rel="stylesheet" href="''' + url_for('static', filename='lab1/lab1.css') + '''"> 
     </head>
     <body>
         <h2>Кузьменко Екатерина Алексеевна</h2>
-        <img src="'''+url_for('static', filename='Логотип_НГТУ_НЭТИ.png')+'''" style="width: 200px; height: auto;">
+        <img src="'''+url_for('static', filename='lab1/Логотип_НГТУ_НЭТИ.png')+'''" style="width: 200px; height: auto;">
 
         <footer>
             &copy; Кузьменко Екатерина, ФБИ-23, 3 курс, 2024
@@ -88,7 +88,7 @@ def python():
 <html> 
     <head>
         <title>НГТУ, ФБ, Лабораторные работы</title>
-        <link rel="stylesheet" href="''' + url_for('static', filename='lab1.css') + '''"> 
+        <link rel="stylesheet" href="''' + url_for('static', filename='lab1/lab1.css') + '''"> 
     </head>
     <body>
         <p><b>Python — это скриптовый язык программирования.</b> Он универсален и подходит для решения разнообразных задач на разных
@@ -100,7 +100,7 @@ def python():
         <p>Python используется в различных сферах, таких как веб-разработка, научные исследования и машинное обучение, тестирование, 
         создание десктопных и мобильных приложений, а также игр.</p>
 
-        <img src="'''+url_for('static', filename='python.jpg')+'''" style="width: 400px; height: auto; display: block; margin: 20px auto;">
+        <img src="'''+url_for('static', filename='lab1/python.jpg')+'''" style="width: 400px; height: auto; display: block; margin: 20px auto;">
 
         <footer>
             &copy; Кузьменко Екатерина, ФБИ-23, 3 курс, 2024
@@ -117,7 +117,7 @@ def book():
 <html> 
     <head>
         <title>НГТУ, ФБ, Лабораторные работы</title>
-        <link rel="stylesheet" href="''' + url_for('static', filename='lab1.css') + '''"> 
+        <link rel="stylesheet" href="''' + url_for('static', filename='lab1/lab1.css') + '''"> 
     </head>
     <body>
         <p><i><b>«Портрет Дориана Грея»</b> (англ. The Picture of Dorian Gray)</i> — роман ирландского писателя и драматурга Оскара Уайльда.В 
@@ -144,7 +144,7 @@ def book():
         отражены его пороки. Бэзил узнаёт свою работу и с ужасом осознаёт, что все слухи о Дориане — правда. Озлобленный Грей убивает 
         Холлуорда. Шантажируя своего бывшего друга учёного Кэмпбелла, Дориан заставляет его уничтожить труп.</p>
 
-        <img src="'''+url_for('static', filename='Дориан.jpg')+'''" style="width: 400px; height: auto; display: block; margin: 20px auto;">
+        <img src="'''+url_for('static', filename='lab1/Дориан.jpg')+'''" style="width: 400px; height: auto; display: block; margin: 20px auto;">
 
         <footer>
             &copy; Кузьменко Екатерина, ФБИ-23, 3 курс, 2024

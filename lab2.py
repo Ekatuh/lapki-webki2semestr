@@ -126,20 +126,20 @@ def example():
         {'name': 'Мандарины', 'price': 95},
         {'name': 'Манго', 'price': 321}
     ]
-    return render_template('example.html', 
+    return render_template('lab2/example.html', 
                             name=name, number=number, group=group, 
                             curs=curs, fruits=fruits)
 
 
 @lab2.route('/lab2/')
 def lab ():
-    return render_template('lab2.html')
+    return render_template('lab2/lab2.html')
 
 
 @lab2.route('/lab2/filters')
 def filters():
     phrase = "О <b>сколько</b> <u>нам</u> <i>открытий</i> чудных..."
-    return render_template('filter.html', phrase=phrase)
+    return render_template('lab2/filter.html', phrase=phrase)
 
 
 @lab2.route('/lab2/calc/')
@@ -152,7 +152,7 @@ def calc_one_number(a):
 
 @lab2.route('/lab2/calc/<int:a>/<int:b>')
 def calc(a, b):
-    return render_template('calc.html', a=a, b=b)
+    return render_template('lab2/calc.html', a=a, b=b)
 
 
 books = [
@@ -171,32 +171,32 @@ books = [
 
 @lab2.route('/lab2/books')
 def books_list():
-    return render_template('books_list.html', books=books)
+    return render_template('lab2/books_list.html', books=books)
 
 objects = [
     {
         'name': 'Яблоко',
-        'image': '/static/apple.jpg',
+        'image': '/static/lab2/apple.jpg',
         'description': 'Сочный и сладкий фрукт, богатый витаминами.'
     },
     {
         'name': 'Груша',
-        'image': '/static/pear.jpg',
+        'image': '/static/lab2/pear.jpg',
         'description': 'Сладкий и сочный фрукт с нежной мякотью.'
     },
     {
         'name': 'Вишня',
-        'image': '/static/cherry.jpg',
+        'image': '/static/lab2/cherry.jpg',
         'description': 'Кислая, но очень вкусная ягода, любимая многими.'
     },
     {
         'name': 'Клубника',
-        'image': '/static/strawberry.webp',
+        'image': '/static/lab2/strawberry.webp',
         'description': 'Сладкая и ароматная ягода, символ лета.'
     },
     {
         'name': 'Смородина',
-        'image': '/static/currant.webp',
+        'image': '/static/lab2/currant.webp',
         'description': 'Кислая ягода, богатая витаминами C и P.'
     }
 ]
@@ -204,4 +204,4 @@ objects = [
 
 @lab2.route('/lab2/objects')
 def show_objects():
-    return render_template('objects.html', objects=objects)
+    return render_template('lab2/objects.html', objects=objects)
