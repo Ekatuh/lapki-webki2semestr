@@ -167,3 +167,37 @@ def bilet():
 @lab3.route('/lab3/ofrmbilet')
 def ofrmbilet():
     return render_template('lab3/ofrmbilet.html')
+
+products = [
+    {'name': 'Шоколад "Хрустящие печенье"', 'price': 250, 'brand': 'Ritter Sport', 'weight': '100g'},
+    {'name': 'Шоколад "Пралине"', 'price': 210, 'brand': 'Ritter Sport', 'weight': '100g'},
+    {'name': 'Шоколад "Мята"', 'price': 150, 'brand': 'Ritter Sport', 'weight': '100g'},
+    {'name': 'Шоколад "Лесной орех"', 'price': 230, 'brand': 'Ritter Sport', 'weight': '100g'},
+    {'name': 'Шоколад "Какао-мусс"', 'price': 120, 'brand': 'Ritter Sport', 'weight': '100g'},
+    {'name': 'Шоколад "Карамельный мусс"', 'price': 110, 'brand': 'Ritter Sport', 'weight': '100g'},
+    {'name': 'Шоколад "Клубника с йогуртом"', 'price': 160, 'brand': 'Ritter Sport', 'weight': '100g'},
+    {'name': 'Шоколад "Марципан"', 'price': 155, 'brand': 'Ritter Sport', 'weight': '100g'},
+    {'name': 'Шоколад "Клубника и мята"', 'price': 190, 'brand': 'Ritter Sport', 'weight': '100g'},
+    {'name': 'Шоколад "Соленый миндаль и мёд"', 'price': 300, 'brand': 'Ritter Sport', 'weight': '100g'},
+    {'name': 'Шоколад "Лимон и йогурт"', 'price': 270, 'brand': 'Ritter Sport', 'weight': '100g'},
+    {'name': 'Шоколад "Кофе гляссе"', 'price': 180, 'brand': 'Ritter Sport', 'weight': '100g'},
+    {'name': 'Шоколад "Молочный шоколад"', 'price': 100, 'brand': 'Ritter Sport', 'weight': '100g'},
+    {'name': 'Шоколад "Темный шоколаад"', 'price': 90, 'brand': 'Ritter Sport', 'weight': '100g'},
+    {'name': 'Шоколад "Белый шоколлад"', 'price': 136, 'brand': 'Ritter Sport', 'weight': '100g'},
+    {'name': 'Шоколад "Цельный миндаль"', 'price': 170, 'brand': 'Ritter Sport', 'weight': '100g'},
+    {'name': 'Шоколад "Кокос"', 'price': 173, 'brand': 'Ritter Sport', 'weight': '100g'},
+    {'name': 'Шоколад "Ром, изюм, орех"', 'price': 137, 'brand': 'Ritter Sport', 'weight': '100g'},
+    {'name': 'Шоколад "Карамельный мусс"', 'price': 179, 'brand': 'Ritter Sport', 'weight': '100g'},
+    {'name': 'Шоколад " Крем-брюле"', 'price': 215, 'brand': 'Ritter Sport', 'weight': '100g'},
+]
+
+@lab3.route('/lab3/chocalete', methods=['GET', 'POST'])
+def search():
+    if request.method == "POST":
+        min_price = request.form.get('min_price', type=float)
+        max_price = request.form.get('max_price', type=float)
+        
+        filtered_products = [product for product in products if min_price <= product['price'] <= max_price]
+        return render_template('lab3/results.html', products=filtered_products)
+
+    return render_template('lab3/search.html')

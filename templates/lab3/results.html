@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block lab %} Лабораторная работа 3 {% endblock %}
+
+{% block main %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Результаты поиска</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background: #fff;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        a {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px; 
+            text-align: center;
+            display: inline-block; 
+            margin-top: 20px; ;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .no-products {
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <h1>Результаты поиска</h1>
+    {% if products %}
+        <ul>
+            {% for product in products %}
+                <li>{{ product.name }} - {{ product.price }} руб. (Бренд: {{ product.brand }}, Вес: {{ product.weight }})</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="no-products">Товары не найдены.</p>
+    {% endif %}
+    <a href="/lab3/chocalete">Назад к поиску</a>
+</body>
+</html>
+{% endblock %}
