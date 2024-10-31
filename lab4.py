@@ -147,23 +147,27 @@ users = [
 @lab4.route('/lab4/auto', methods=['GET', 'POST'])
 def auto():
     error = None
+    login = request.form.get('login', '').strip()  # Убираем возможные пробелы
+    password = request.form.get('password', '').strip()  # Убираем возможные пробелы
+
     if request.method == 'POST':
-        login = request.form['login']
-        password = request.form['password']
-        if not login:
-            error = "Не введён логин"
+        if not login and not password:
+            error = "Пожалуйста, введите логин и пароль."
+        elif not login:
+            error = "Не введён логин."
         elif not password:
-            error = "Не введён пароль"
+            error = "Не введён пароль."
         else:
-            user = next((u for u in users if u['login'] == login and u['password'] == password), None)
+            # Здесь должна быть проверка логина и пароля
+            user = db.get_user(login, password) 
             if user:
-                session['username'] = user['name']
-                return redirect(url_for('lab4.welcome'))
+                # Успешная авторизация
+                session['username'] = user['name']  # Сохраняем имя пользователя в сессии
+                return redirect(url_for('lab4.welcome')) 
             else:
-                error = "Неверный логин или пароль"
-        if error:
-            return render_template('lab4/auto.html', error=error, login=login)
-    return render_template('lab4/auto.html')
+                error = "Неверный логин или пароль."
+
+    return render_template('lab4/auto.html', error=error, login=login)
 
 @lab4.route('/lab4/welcome')
 def welcome():
@@ -176,3 +180,31 @@ def welcome():
 def log():
     session.pop('username', None)
     return redirect(url_for('lab4.auto'))
+
+
+@lab4.route('/lab4/refrigerator', methods=['GET', 'POST'])
+def refrigerator():
+    message = ""
+    
+    if request.method == 'POST':
+        temperature = request.form.get('temperature')
+        
+        if temperature is None or temperature == '':
+            message = "Ошибка: не задана температура"
+        else:
+            try:
+                temperature = float(temperature)
+                if temperature < -12:
+                    message = "Не удалось установить температуру — слишком низкое значение"
+                elif temperature > -1:
+                    message = "Не удалось установить температуру — слишком высокое значение"
+                elif -12 <= temperature <= -9:
+                    message = f"Установлена температура: {temperature}°C ❄️❄️❄️"
+                elif -8 <= temperature <= -5:
+                    message = f"Установлена температура: {temperature}°C ❄️❄️"
+                elif -4 <= temperature <= -1:
+                    message = f"Установлена температура: {temperature}°C ❄️"
+            except ValueError:
+                message = "Ошибка: введено некорректное значение температуры"
+    return render_template('lab4/refrigerator.html', message=message)
+
