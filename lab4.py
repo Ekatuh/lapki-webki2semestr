@@ -136,4 +136,43 @@ def login():
 def logout():
   session.pop('login', None)
   return redirect('/lab4/login')
-  
+
+
+# Список пользователей с именем, полом, логином и паролем
+users = [
+    {"name": "Иван Иванов", "gender": "Мужской", "login": "ivan", "password": "123"},
+    {"name": "Александра Петрова", "gender": "Женский", "login": "alexandra", "password": "555"},
+]
+
+@lab4.route('/lab4/auto', methods=['GET', 'POST'])
+def auto():
+    error = None
+    if request.method == 'POST':
+        login = request.form['login']
+        password = request.form['password']
+        if not login:
+            error = "Не введён логин"
+        elif not password:
+            error = "Не введён пароль"
+        else:
+            user = next((u for u in users if u['login'] == login and u['password'] == password), None)
+            if user:
+                session['username'] = user['name']
+                return redirect(url_for('lab4.welcome'))
+            else:
+                error = "Неверный логин или пароль"
+        if error:
+            return render_template('lab4/auto.html', error=error, login=login)
+    return render_template('lab4/auto.html')
+
+@lab4.route('/lab4/welcome')
+def welcome():
+    if 'username' in session:
+        return f'Добро пожаловать, {session["username"]}'
+    else:
+        return redirect(url_for('lab4.auto'))
+
+@lab4.route('/lab4/log')
+def log():
+    session.pop('username', None)
+    return redirect(url_for('lab4.auto'))

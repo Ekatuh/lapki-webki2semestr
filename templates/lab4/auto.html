@@ -1,0 +1,90 @@
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4; /* Светлый фон */
+        margin: 0;
+        padding: 0;
+    }
+    
+    .header {
+        position: fixed; /* Фиксируем заголовок */
+        top: 0; /* Прикрепляем к верхней части страницы */
+        left: 0;
+        right: 0;
+        background-color: white; /* Белый фон для заголовка */
+        padding: 10px 0; /* Отступы сверху и снизу */
+        text-align: center; /* Центрируем текст */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Тень для заголовка */
+        z-index: 1000; /* Убедимся, что заголовок выше других элементов */
+    }
+    
+    .container {
+        background: white; /* Белый фон для формы */
+        padding: 20px;
+        border-radius: 8px; /* Скругленные углы */
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Тень для формы */
+        width: 300px; /* Ширина формы */
+        margin-top: 60px; /* Отступ сверху, чтобы не перекрывать заголовок */
+    }
+    
+    h1 {
+        color: #333; /* Цвет заголовка */
+        margin: 0; /* Убираем отступы у заголовка */
+    }
+    
+    label {
+        display: block; /* Блоковое отображение для меток */
+        margin-bottom: 5px; /* Отступ снизу */
+    }
+    
+    input[type="text"],
+    input[type="password"] {
+        width: 100%; /* Ширина полей ввода на всю ширину контейнера */
+        padding: 10px; /* Отступ внутри полей */
+        margin-bottom: 15px; /* Отступ снизу */
+        border: 1px solid #ccc; /* Цвет рамки */
+        border-radius: 4px; /* Скругленные углы */
+        box-sizing: border-box; /* Учитываем отступы и рамки в ширине */
+    }
+    
+    input[type="submit"] {
+        background-color: #007bff; /* Цвет кнопки */
+        color: white; /* Цвет текста кнопки */
+        padding: 10px; /* Отступ внутри кнопки */
+        border: none; /* Убираем рамку */
+        border-radius: 4px; /* Скругленные углы */
+        cursor: pointer; /* Курсор при наведении */
+        width: 100%; /* Ширина кнопки на всю ширину контейнера */
+    }
+    
+    input[type="submit"]:hover {
+        background-color: #0056b3; /* Цвет кнопки при наведении */
+    }
+    
+    .error-message {
+        color: red; /* Цвет сообщения об ошибке */
+        text-align: center; /* Центрируем сообщение об ошибке */
+    }
+</style>
+
+{% extends "base.html" %}
+
+{% block lab %}Авторизация{% endblock %}
+
+{% block main %}
+    <div class="container" style="margin-left: auto; margin-right: auto; width: 600px;">
+        <h1>Авторизация</h1>
+        <form method="POST" action="/lab4/auto" style="margin-left: auto; margin-right: auto; width: 600px;">
+            <label for="login">Логин:</label>
+            <input type="text" id="login" name="login" value="{{ login }}" required>
+            <br>
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" name="password" required>
+            <br>
+            <input type="submit" value="Войти">
+        </form>
+        {% if error %}
+        <p class="error-message">{{ error }}</p>
+        {% endif %}
+    </div>
+{% endblock %}
