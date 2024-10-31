@@ -1,4 +1,5 @@
 from flask import Blueprint, redirect, url_for, render_template, render_template_string, abort, request, make_response, session
+from functools import wraps
 lab4 = Blueprint('lab4', __name__, static_folder='static')
 
 @lab4.route('/lab4/')
@@ -105,81 +106,151 @@ def tree():
 
 
 users = [
-  {'login': 'alex', 'password': '123'},
-  {'login': 'bob', 'password': '555'},
-  {'login': 'ekatushka', 'password': '666'},
-  {'login': 'dashushka', 'password': '69'},
+    {'login': 'alex', 'password': '123', 'name': 'Alex'},
+    {'login': 'bob', 'password': '555', 'name': 'Bob'},
+    {'login': 'ekatushka', 'password': '666', 'name': 'Ekaterina'},
+    {'login': 'dashushka', 'password': '69', 'name': 'Darya'},
 ]
-@lab4.route('/lab4/login', methods= ['GET', 'POST'])
+
+# Декоратор для проверки авторизации
+def login_required(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if 'login' not in session:
+            return redirect(url_for('login'))
+        return func(*args, **kwargs)
+    return wrapper
+
+@lab4.route('/lab4/login', methods=['GET', 'POST'])
 def login():
-  if request.method == 'GET':
-    if 'login' in session:
-      authorized = True
-      login = session['login']
-    else:
-      authorized = False
-      login = ''
-    return render_template ('lab4/login.html', authorized=authorized, login=login)
+    if request.method == 'GET':
+        if 'login' in session:
+            return redirect(url_for('lab4.user_list'))
+        return render_template('lab4/login.html')
 
-  login = request.form.get('login')
-  password = request.form.get('password')
+    login = request.form.get('login')
+    password = request.form.get('password')
 
-  for user in users:
-    if login == user['login'] and password == user['password'] :
-      session['login'] = login
-      return redirect ('/lab4/login')
+    for user in users:
+        if login == user['login'] and password == user['password']:
+            session['login'] = login
+            return redirect(url_for('lab4.user_list'))
 
-  error = 'Неверные логин и/или пароль'
-  return render_template('lab4/login.html', error=error, authorized=False)
+    error = 'Неверные логин и/или пароль'
+    return render_template('lab4/login.html', error=error)
 
-@lab4.route('/lab4/logout', methods = ['POST'])
+@lab4.route('/lab4/logout', methods=['GET', 'POST'])
 def logout():
-  session.pop('login', None)
-  return redirect('/lab4/login')
+    if request.method == 'POST':
+        session.pop('login', None)
+        return redirect(url_for('lab4.login'))
+    # Если метод GET, можно просто перенаправить или отобразить страницу
+    return redirect(url_for('lab4.login'))  # или render_template('some_template.html')
+
+@lab4.route('/lab4/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'GET':
+        return render_template('lab4/register.html')
+
+    login = request.form.get('login')
+    password = request.form.get('password')
+    name = request.form.get('name')
+
+    if any(user['login'] == login for user in users):
+        error = 'Пользователь с таким логином уже существует'
+        return render_template('lab4/register.html', error=error)
+
+    users.append({'login': login, 'password': password, 'name': name})
+    return redirect(url_for('lab4.login'))
+
+@lab4.route('/lab4/users')
+@login_required
+def user_list():
+    current_user = next((user for user in users if user['login'] == session['login']), None)
+    return render_template('lab4/users.html', users=users, current_user=current_user)
+
+@lab4.route('/lab4/users/delete/<login>')
+@login_required
+def delete_user(login):
+    global users
+    users = [user for user in users if user['login'] != login]
+    return redirect(url_for('lab4.user_list'))
+
+@lab4.route('/lab4/users/edit/<login>', methods=['GET', 'POST'])
+@login_required
+def edit_user(login):
+    if request.method == 'GET':
+        user = next((user for user in users if user['login'] == login), None)
+        return render_template('lab4/edit_user.html', user=user)
+
+    new_password = request.form.get('password')
+    new_name = request.form.get('name')
+    for user in users:
+        if user['login'] == login:
+            user['password'] = new_password
+            user['name'] = new_name
+            break
+    return redirect(url_for('lab4.user_list'))
 
 
 # Список пользователей с именем, полом, логином и паролем
 users = [
-    {"name": "Иван Иванов", "gender": "Мужской", "login": "ivan", "password": "123"},
-    {"name": "Александра Петрова", "gender": "Женский", "login": "alexandra", "password": "555"},
+  {"name": "Иван Иванов", "gender": "Мужской", "login": "ivan", "password": "123"},
+  {"name": "Александра Петрова", "gender": "Женский", "login": "alexandra", "password": "555"},
 ]
+
+def get_user(login, password):
+  """
+  Функция для проверки логина и пароля.
+
+  Args:
+    login (str): Логин пользователя.
+    password (str): Пароль пользователя.
+
+  Returns:
+    dict: Словарь с информацией о пользователе, если логин и пароль верны, иначе None.
+  """
+  for user in users:
+    if user['login'] == login and user['password'] == password:
+      return user
+  return None
 
 @lab4.route('/lab4/auto', methods=['GET', 'POST'])
 def auto():
-    error = None
-    login = request.form.get('login', '').strip()  # Убираем возможные пробелы
-    password = request.form.get('password', '').strip()  # Убираем возможные пробелы
+  error = None
+  login = request.form.get('login', '').strip() # Убираем возможные пробелы
+  password = request.form.get('password', '').strip() # Убираем возможные пробелы
 
-    if request.method == 'POST':
-        if not login and not password:
-            error = "Пожалуйста, введите логин и пароль."
-        elif not login:
-            error = "Не введён логин."
-        elif not password:
-            error = "Не введён пароль."
-        else:
-            # Здесь должна быть проверка логина и пароля
-            user = db.get_user(login, password) 
-            if user:
-                # Успешная авторизация
-                session['username'] = user['name']  # Сохраняем имя пользователя в сессии
-                return redirect(url_for('lab4.welcome')) 
-            else:
-                error = "Неверный логин или пароль."
+  if request.method == 'POST':
+    if not login and not password:
+      error = "Пожалуйста, введите логин и пароль."
+    elif not login:
+      error = "Не введён логин."
+    elif not password:
+      error = "Не введён пароль."
+    else:
+      # Здесь должна быть проверка логина и пароля
+      user = get_user(login, password) 
+      if user:
+        # Успешная авторизация
+        session['username'] = user['name'] # Сохраняем имя пользователя в сессии
+        return redirect(url_for('lab4.welcome')) 
+      else:
+        error = "Неверный логин или пароль."
 
-    return render_template('lab4/auto.html', error=error, login=login)
+  return render_template('lab4/auto.html', error=error, login=login)
 
 @lab4.route('/lab4/welcome')
 def welcome():
-    if 'username' in session:
-        return f'Добро пожаловать, {session["username"]}'
-    else:
-        return redirect(url_for('lab4.auto'))
+  if 'username' in session:
+    return f'Добро пожаловать, {session["username"]}'
+  else:
+    return redirect(url_for('lab4.auto'))
 
 @lab4.route('/lab4/log')
 def log():
-    session.pop('username', None)
-    return redirect(url_for('lab4.auto'))
+  session.pop('username', None)
+  return redirect(url_for('lab4.auto'))
 
 
 @lab4.route('/lab4/refrigerator', methods=['GET', 'POST'])

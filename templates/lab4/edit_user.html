@@ -25,14 +25,8 @@
         margin-bottom: 20px;
       }
       
-      .subtitle {
-        font-size: 1.2rem;
-        color: #666;
-        margin-bottom: 30px;
-      }
-      
       /* Форма */
-      .login-form {
+      .edit-form {
         width: 300px;
         margin: 0 auto;
       }
@@ -51,11 +45,6 @@
         border-radius: 3px;
       }
       
-      .error {
-        color: red;
-        margin-bottom: 10px;
-      }
-      
       /* Кнопка */
       .button {
         background-color: #007bff;
@@ -70,11 +59,6 @@
       .button:hover {
         background-color: #0056b3;
       }
-      
-      /* Ссылка для регистрации */
-      .register-link {
-        margin-top: 20px;
-      }
 </style>
 {% extends "base.html" %}
 
@@ -82,22 +66,19 @@
 
 {% block main %}
     <div class="container">
-        <h1 class="title">Вход</h1>
-        <p class="subtitle">Пожалуйста, авторизуйтесь</p>
-        <form method="post" class="login-form">
+        <h1 class="title">Редактирование профиля</h1>
+        <form method="post" class="edit-form">
             <div>
-                <label for="login" class="label">Пользователь:</label>
-                <input type="text" id="login" name="login" class="input">
+                <label for="name" class="label">Имя:</label>
+                <input type="text" id="name" name="name" value="{{ user['name'] }}" class="input">
             </div>
             <div>
                 <label for="password" class="label">Пароль:</label>
-                <input type="password" id="password" name="password" class="input">
+                <input type="password" id="password" name="password" value="{{ user['password'] }}" class="input">
             </div>
-            <div class="error">{{ error }}</div>
             <div>
-                <button type="submit" class="button">Войти</button>
+                <button type="submit" class="button">Сохранить изменения</button>
             </div>
         </form>
-        <p class="register-link">Еще нет аккаунта? <a href="/lab4/register">Зарегистрируйтесь</a></p>
     </div>
 {% endblock %}
