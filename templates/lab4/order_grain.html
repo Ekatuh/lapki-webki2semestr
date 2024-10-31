@@ -1,0 +1,53 @@
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f8ff;
+        color: #333;
+        text-align: center;
+        padding: 20px;
+    }
+    h1 {
+        color: #007bff;
+    }
+    form {
+        margin-bottom: 20px;
+    }
+    input[type="text"], select {
+        padding: 5px;
+        width: 100px;
+    }
+    button {
+        padding: 5px 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #0056b3;
+    }
+</style>
+{% extends "base.html" %}
+
+{% block lab %}Холодильник{% endblock %}
+
+{% block main %}
+    <h1>Заказ зерна</h1>
+    <form method="POST">
+        <label for="grain_type">Тип зерна:</label>
+        <select name="grain_type" id="grain_type" required>
+            {% for grain in grains %}
+                <option value="{{ grain }}">{{ grain }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label for="weight">Вес (в тоннах):</label>
+        <input type="number" name="weight" id="weight" step="0.01" required><br>
+
+        <button type="submit">Заказать</button>
+    </form>
+
+    {% if message %}
+        <p>{{ message }}</p>
+    {% endif %}
+{% endblock %}
