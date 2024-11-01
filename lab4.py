@@ -141,11 +141,11 @@ def login():
 
 @lab4.route('/lab4/logout', methods=['GET', 'POST'])
 def logout():
-    if request.method == 'POST':
-        session.pop('login', None)
-        return redirect(url_for('lab4.login'))
-    # Если метод GET, можно просто перенаправить или отобразить страницу
-    return redirect(url_for('lab4.login'))  # или render_template('some_template.html')
+       if request.method == 'POST':
+           session.pop('login', None)
+           return redirect(url_for('lab4.login'))
+       elif request.method == 'GET':
+           return redirect(url_for('lab4.login'))
 
 @lab4.route('/lab4/register', methods=['GET', 'POST'])
 def register():
