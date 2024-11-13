@@ -61,7 +61,7 @@
             </ul>
         </div>
         <div class="user">
-            <p>Пользователь: anonymous</p>
+            <p>Пользователь: {{ username if username else 'Anonymous' }}</p>
         </div>
     </div>
 {% endblock %}
