@@ -72,14 +72,41 @@
     .article-container {
         margin-bottom: 20px; /* Отступ между статьями */
     }
+    .button {
+        background-color: #007BFF; /* Зеленый фон */
+        border: none; /* Без рамки */
+        color: white; /* Белый текст */
+        padding: 10px 20px; /* Отступы */
+        text-align: center; /* Центрирование текста */
+        text-decoration: none; /* Без подчеркивания */
+        display: inline-block; /* Инлайн-блок для правильного отображения */
+        font-size: 16px; /* Размер шрифта */
+        margin: 4px 2px; /* Отступы между кнопками */
+        cursor: pointer; /* Указатель при наведении */
+        border-radius: 5px; /* Скругленные углы */
+        transition: background-color 0.3s, transform 0.3s; /* Плавный переход */
+    }
+    
+    /* Эффект при наведении */
+    .button:hover {
+        background-color: #45a049; /* Темнее зеленый при наведении */
+        transform: scale(1.05); /* Увеличение размера кнопки */
+    }
+    
+    /* Стили для кнопок удаления */
+    .delete-button {
+        background-color: #f44336; /* Красный фон для удаления */
+    }
+    
+    .delete-button:hover {
+        background-color: #d32f2f; /* Темнее красный при наведении */
+    }
 </style>
 
 {% extends "base.html" %}
 
-{# Номер лабораторной работы: #}
 {% block lab %}Лабораторная работа 5{% endblock %}
 
-{# Основной контент: #}
 {% block main %}
     <h1>Статьи</h1>
     
@@ -93,6 +120,19 @@
                     <a class="edit-link" href="{{ url_for('lab5.edit', article_id=article['id']) }}">Редактировать</a>
                 </h2>
                 <blockquote>{{ article['article_text'] }}</blockquote>
+                
+                <p><strong>Тип статьи:</strong> {% if article.is_public %} Публичная {% else %} Личная {% endif %}</p>
+                <form action="{{ url_for('lab5.toggle_favorite', article_id=article['id']) }}" method="post">
+                    <button type="submit" class="button">
+                    
+                        {% if article['is_favorite'] %}
+                            Убрать из любимых
+                        {% else %}
+                            Добавить в любимые
+                        {% endif %}
+                    </button>
+                </form>
+
                 <form action="{{ url_for('lab5.delete', article_id=article['id']) }}" method="post">
                     <button type="submit" class="delete-button">Удалить</button>
                 </form>

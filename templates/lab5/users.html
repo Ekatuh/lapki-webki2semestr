@@ -1,0 +1,38 @@
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+    }
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    li {
+        background-color: #fff;
+        margin: 5px 0;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+</style>
+{% extends "base.html" %}
+
+{# Номер лабораторной работы: #}
+{% block lab %}Лабораторная работа 5{% endblock %}
+
+{# Основной контент: #}
+{% block main %}
+    <h1>Список зарегистрированных пользователей</h1>
+    <ul>
+        {% for user in users %}
+            <li>{{ user['login'] }}</li>
+        {% endfor %}
+    </ul>
+    <a href="/lab5/list">Назад к списку статей</a>
+{% endblock %}

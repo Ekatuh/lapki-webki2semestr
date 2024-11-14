@@ -1,0 +1,60 @@
+<style>
+    .back-button {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 10px 15px;
+        background-color: #007BFF; /* Цвет фона */
+        color: white; /* Цвет текста */
+        text-decoration: none; /* Убираем подчеркивание */
+        border-radius: 5px; /* Закругленные углы */
+        transition: background-color 0.3s; /* Плавный переход цвета фона */
+    }
+
+    .back-button:hover {
+        background-color: #0056b3; /* Цвет фона при наведении */
+    }
+
+    h1 {
+        margin-bottom: 20px;
+    }
+
+    .articles-container {
+        display: flex;
+        flex-direction: column; /* Вертикальное расположение статей */
+        gap: 15px; /* Отступ между статьями */
+    }
+
+    .article-container {
+        border: 1px solid #ccc; /* Рамка вокруг статьи */
+        border-radius: 5px; /* Закругленные углы */
+        padding: 15px; /* Внутренний отступ */
+        background-color: #f9f9f9; /* Цвет фона статьи */
+        transition: box-shadow 0.3s; /* Плавный переход тени */
+    }
+
+    .article-container:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Тень при наведении */
+    }
+</style>
+{% extends "base.html" %}
+
+{% block lab %}Лабораторная работа 5{% endblock %}
+
+{% block main %}
+    <h1>Публичные статьи</h1>
+    <div class="articles-container">
+        {% for article in articles %}
+            <div class="article-container">
+                <h2>{{ article.title }}</h2>
+                <p>{{ article.article_text }}</p>
+                <p><strong>Статус:</strong> {% if article.is_public %} Публичная {% else %} Личная {% endif %}</p>
+            </div>
+        {% else %}
+            <div class="article-container">
+                <p>Нет доступных статей.</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <a href="/lab5" class="back-button">Перейти к базе знаний</a>
+{% endblock %}
