@@ -224,10 +224,12 @@ def edit(article_id):
     else:
         cur.execute("SELECT id FROM users WHERE login=?;", (login, ))
     login_id = cur.fetchone()["id"]
-
-    cur.execute(f"SELECT * FROM articles WHERE id=%s AND user_id=%s", (article_id, login_id))
+    if current_app.config['DB_TYPE'] == 'postgres':
+        cur.execute(f"SELECT * FROM articles WHERE id=%s AND user_id=%s", (article_id, login_id))
+        
+    else:
+        cur.execute(f"SELECT * FROM articles WHERE id=? AND user_id=?", (article_id, login_id))
     article = cur.fetchone()
-
     db_close(conn, cur)
 
     if not article:
@@ -265,8 +267,10 @@ def delete(article_id):
         cur.execute("SELECT id FROM users WHERE login=?;", (login,))
     login_id = cur.fetchone()["id"]
 
-    # Проверяем, существует ли статья и принадлежит ли она пользователю
-    cur.execute(f"SELECT * FROM articles WHERE id=%s AND user_id=%s", (article_id, login_id))
+    if current_app.config['DB_TYPE'] == 'postgres':
+        cur.execute(f"SELECT * FROM articles WHERE id=%s AND user_id=%s", (article_id, login_id))
+    else:
+        cur.execute(f"SELECT * FROM articles WHERE id=? AND user_id=?", (article_id, login_id))
     article = cur.fetchone()
 
     if not article:
