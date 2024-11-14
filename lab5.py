@@ -101,24 +101,29 @@ def login():
     db_close(conn, cur)
     return render_template('lab5/success_login.html', login=login)
 
-@lab5.route('/lab5/create', methods = ['GET', 'POST'])
-def create ():
+@lab5.route('/lab5/create', methods=['GET', 'POST'])
+def create():
     login = session.get('login')
     if not login:
         return redirect('/lab5/login')
 
     if request.method == 'GET':
         return render_template('lab5/create_article.html')
-    
+
     title = request.form.get('title')
     article_text = request.form.get('article_text')
-    
+
+    # Валидация: проверка на пустые поля
+    if not title or not article_text:
+        error = "Заголовок и текст статьи не могут быть пустыми."
+        return render_template('lab5/create_article.html', error=error)
+
     conn, cur = db_connect()
     if current_app.config['DB_TYPE'] == 'postgres':
-        cur.execute("SELECT * FROM users WHERE login=%s;", (login, ))
+        cur.execute("SELECT * FROM users WHERE login=%s;", (login,))
     else:
-        cur.execute("SELECT * FROM users WHERE login=?;", (login, ))
-    login_id = cur.fetchone()["id"] 
+        cur.execute("SELECT * FROM users WHERE login=?;", (login,))
+    login_id = cur.fetchone()["id"]
 
     cur.execute(f"INSERT INTO articles(user_id, title, article_text) \
             VALUES({login_id}, '{title}', '{article_text}');")
@@ -145,4 +150,77 @@ def list():
     db_close(conn, cur)
     return render_template('/lab5/articles.html', articles=articles)
 
+@lab5.route('/lab5/logout')
+def logout():
+  session.pop('login', None)
+  return redirect('/lab5')
+
+@lab5.route('/lab5/edit/<int:article_id>', methods=['GET', 'POST'])
+def edit(article_id):
+    login = session.get('login')
+    if not login:
+        return redirect('/lab5/login')
+
+    conn, cur = db_connect()
+    if current_app.config['DB_TYPE'] == 'postgres':
+        cur.execute("SELECT id FROM users WHERE login=%s;", (login, ))
+    else:
+        cur.execute("SELECT id FROM users WHERE login=?;", (login, ))
+    login_id = cur.fetchone()["id"]
+
+    cur.execute(f"SELECT * FROM articles WHERE id=%s AND user_id=%s", (article_id, login_id))
+    article = cur.fetchone()
+
+    db_close(conn, cur)
+
+    if not article:
+        abort(404)
+
+    if request.method == 'POST':
+        title = request.form.get('title')
+        article_text = request.form.get('article_text')
+
+        if not title or not article_text:
+            error = "Заголовок и текст статьи не могут быть пустыми."
+            return render_template('lab5/edit_article.html', article=article, error=error)
+
+        conn, cur = db_connect()
+        if current_app.config['DB_TYPE'] == 'postgres':
+            cur.execute(f"UPDATE articles SET title=%s, article_text=%s WHERE id=%s", (title, article_text, article_id))
+        else:
+            cur.execute(f"UPDATE articles SET title=?, article_text=? WHERE id=?", (title, article_text, article_id))
+        db_close(conn, cur)
+
+        return redirect('/lab5/list')
+
+    return render_template('lab5/edit_article.html', article=article)
+
+@lab5.route('/lab5/delete/<int:article_id>', methods=['POST'])
+def delete(article_id):
+    login = session.get('login')
+    if not login:
+        return redirect('/lab5/login')
+
+    conn, cur = db_connect()
+    if current_app.config['DB_TYPE'] == 'postgres':
+        cur.execute("SELECT id FROM users WHERE login=%s;", (login,))
+    else:
+        cur.execute("SELECT id FROM users WHERE login=?;", (login,))
+    login_id = cur.fetchone()["id"]
+
+    # Проверяем, существует ли статья и принадлежит ли она пользователю
+    cur.execute(f"SELECT * FROM articles WHERE id=%s AND user_id=%s", (article_id, login_id))
+    article = cur.fetchone()
+
+    if not article:
+        abort(404)  # Статья не найдена или не принадлежит пользователю
+
+    # Удаляем статью
+    if current_app.config['DB_TYPE'] == 'postgres':
+        cur.execute("DELETE FROM articles WHERE id=%s;", (article_id,))
+    else:
+        cur.execute("DELETE FROM articles WHERE id=?;", (article_id,))
     
+    db_close(conn, cur)
+    
+    return redirect('/lab5/list')

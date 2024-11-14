@@ -1,3 +1,79 @@
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h1 {
+        color: #333;
+        text-align: center;
+    }
+
+    h2 {
+        color: #007BFF;
+        margin-top: 20px;
+        display: flex; /* Используем Flexbox для заголовка */
+        justify-content: space-between; /* Распределяем пространство между заголовком и кнопкой */
+        align-items: center; /* Центрируем по вертикали */
+    }
+
+    blockquote {
+        background-color: #fff;
+        border-left: 5px solid #007BFF;
+        padding: 10px 20px;
+        margin: 10px 0;
+        font-style: italic;
+    }
+
+    p {
+        text-align: center;
+    }
+
+    a {
+        color: #007BFF;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    .edit-link, .knowledge-link {
+        margin-left: 10px; /* Отступ между заголовком и ссылкой редактирования */
+        padding: 5px 10px; /* Уменьшаем размер кнопки */
+        border: 1px solid #007BFF; /* Добавляем рамку */
+        border-radius: 5px; /* Закругляем углы */
+        background-color: #fff; /* Фоновый цвет кнопки */
+        transition: background-color 0.3s; /* Плавный переход при наведении */
+    }
+
+    .edit-link:hover, .knowledge-link:hover {
+        background-color: #007BFF; /* Изменяем фон при наведении */
+        color: white; /* Меняем цвет текста при наведении */
+    }
+    
+    .delete-button {
+        background-color: #dc3545; /* Красный цвет */
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 10px; /* Отступ сверху для отделения от текста статьи */
+    }
+
+    .delete-button:hover {
+        background-color: #c82333; /* Темнее при наведении */
+    }
+
+    .article-container {
+        margin-bottom: 20px; /* Отступ между статьями */
+    }
+</style>
+
 {% extends "base.html" %}
 
 {# Номер лабораторной работы: #}
@@ -7,11 +83,23 @@
 {% block main %}
     <h1>Статьи</h1>
     
-    {% for article in articles %}
-        <h2>{{ article['title'] }}</h2>
-        <blockquote>{{ article['article_text'] }}</blockquote>
-    {% endfor %}
+    {% if articles|length == 0 %}
+        <p>У вас нет ни одной статьи.</p>
+    {% else %}
+        {% for article in articles %}
+            <div class="article-container">
+                <h2>
+                    {{ article['title'] }}
+                    <a class="edit-link" href="{{ url_for('lab5.edit', article_id=article['id']) }}">Редактировать</a>
+                </h2>
+                <blockquote>{{ article['article_text'] }}</blockquote>
+                <form action="{{ url_for('lab5.delete', article_id=article['id']) }}" method="post">
+                    <button type="submit" class="delete-button">Удалить</button>
+                </form>
+            </div>
+        {% endfor %}
+    {% endif %}
     <p> 
-        <a href="/lab5">Перейти к базе знаний</a>
+        <a class="knowledge-link" href="/lab5">Перейти к базе знаний</a>
     </p>
 {% endblock %}
