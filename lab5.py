@@ -129,9 +129,12 @@ def create():
         cur.execute("SELECT * FROM users WHERE login=?;", (login,))
     login_id = cur.fetchone()["id"]
 
-    # Вставляем статью с учетом is_public
-    cur.execute("INSERT INTO articles(user_id, title, article_text, is_public) VALUES(%s, %s, %s, %s);", 
+    if current_app.config['DB_TYPE'] == 'postgres':
+        cur.execute("INSERT INTO articles(user_id, title, article_text, is_public) VALUES(%s, %s, %s, %s);", 
                 (login_id, title, article_text, is_public))
+    else:
+        cur.execute("INSERT INTO articles(user_id, title, article_text, is_public) VALUES(?, ?, ?, ?);", 
+                    (login_id, title, article_text, is_public))
 
     db_close(conn, cur)
     return redirect('/lab5')
