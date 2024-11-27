@@ -46,10 +46,11 @@ def lab():
     return render_template('lab6/lab6.html', login=session.get('login'), username=username)
 
 
-@lab6.route('/lab6/json-rpc-api/', methods = ['POST'])
+@lab6.route('/lab6/json-rpc-api/', methods=['POST'])
 def api():
     data = request.json
     id = data['id']
+    
     if data['method'] == 'info':
         return {
             'jsonrpc': '2.0',
@@ -72,23 +73,51 @@ def api():
         office_number = data['params']
         for office in offices:
             if office['number'] == office_number:
-                if  office['tenant'] != '':
+                if office['tenant'] != '':
                     return {
-                    'jsonrpc': '2.0',
-                    'error': {
-                        'code': 2,
-                        'message': 'Already booked'
-                    },
-                    'id': id
-                }
-
+                        'jsonrpc': '2.0',
+                        'error': {
+                            'code': 2,
+                            'message': 'Already booked'
+                        },
+                        'id': id
+                    }
                 office['tenant'] = login
                 return {
                     'jsonrpc': '2.0',
                     'result': 'success',
                     'id': id
                 }
-   
+    
+    if data['method'] == 'cancellation':  # Исправлено: 'methon' на 'method'
+        office_number = data['params']
+        for office in offices:
+            if office['number'] == office_number:
+                if office['tenant'] == '':
+                    return {
+                        'jsonrpc': '2.0',
+                        'error': {
+                            'code': 3,
+                            'message': 'Office is not booked'
+                        },
+                        'id': id
+                    }
+                if office['tenant'] != login:
+                    return {
+                        'jsonrpc': '2.0',
+                        'error': {
+                            'code': 4,
+                            'message': 'You cannot cancel someone else\'s booking'
+                        },
+                        'id': id
+                    }
+                office['tenant'] = ''  # Освобождаем офис
+                return {
+                    'jsonrpc': '2.0',
+                    'result': 'success',
+                    'id': id
+                }
+    
     return {
         'jsonrpc': '2.0',
         'error': {
