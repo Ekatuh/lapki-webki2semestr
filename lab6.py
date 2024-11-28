@@ -6,6 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
 from os import path
 
+
 lab6 = Blueprint('lab6', __name__, static_folder='static')
 
 offices = []
@@ -37,11 +38,10 @@ def db_close(conn, cur):
     conn.close()
 
 
-
 @lab6.route('/lab6/')
 def lab():
     username = session.get('login', '')
-    return render_template('lab6/lab6.html', login=session.get('login'), username=username)
+    return render_template('lab6/lab6.html', login=session.get('login'), username=username, offices=offices)
 
 
 @lab6.route('/lab6/json-rpc-api/', methods=['POST'])
@@ -49,15 +49,21 @@ def api():
     data = request.json
     id = data['id']
     
+    conn, cur = db_connect()
+
     if data['method'] == 'info':
+        cur.execute("SELECT * FROM offices;")
+        offices = cur.fetchall()
+        db_close(conn, cur)
         return {
             'jsonrpc': '2.0',
             'result': offices,
             'id': id
         }
-    
+
     login = session.get('login')
     if not login:
+        db_close(conn, cur)
         return {
             'jsonrpc': '2.0',
             'error': {
@@ -66,56 +72,89 @@ def api():
             },
             'id': id
         }
-    
+
     if data['method'] == 'booking':
         office_number = data['params']
-        for office in offices:
-            if office['number'] == office_number:
-                if office['tenant'] != '':
-                    return {
-                        'jsonrpc': '2.0',
-                        'error': {
-                            'code': 2,
-                            'message': 'Already booked'
-                        },
-                        'id': id
-                    }
-                office['tenant'] = login
-                return {
-                    'jsonrpc': '2.0',
-                    'result': 'success',
-                    'id': id
-                }
-    
-    if data['method'] == 'cancellation':  # Исправлено: 'methon' на 'method'
+        cur.execute("SELECT * FROM offices WHERE number = %s;", (office_number,))
+        office = cur.fetchone()
+        
+        if office is None:
+            db_close(conn, cur)
+            return {
+                'jsonrpc': '2.0',
+                'error': {
+                    'code': 5,
+                    'message': 'Office not found'
+                },
+                'id': id
+            }
+        
+        if office['tenant'] is not None:
+            db_close(conn, cur)
+            return {
+                'jsonrpc': '2.0',
+                'error': {
+                    'code': 2,
+                    'message': 'Already booked'
+                },
+                'id': id
+            }
+        
+        cur.execute("UPDATE offices SET tenant = %s WHERE number = %s;", (login, office_number))
+        db_close(conn, cur)
+        return {
+            'jsonrpc': '2.0',
+            'result': 'success',
+            'id': id
+        }
+
+    if data['method'] == 'cancellation':
         office_number = data['params']
-        for office in offices:
-            if office['number'] == office_number:
-                if office['tenant'] == '':
-                    return {
-                        'jsonrpc': '2.0',
-                        'error': {
-                            'code': 3,
-                            'message': 'Office is not booked'
-                        },
-                        'id': id
-                    }
-                if office['tenant'] != login:
-                    return {
-                        'jsonrpc': '2.0',
-                        'error': {
-                            'code': 4,
-                            'message': 'You cannot cancel someone else\'s booking'
-                        },
-                        'id': id
-                    }
-                office['tenant'] = ''  # Освобождаем офис
-                return {
-                    'jsonrpc': '2.0',
-                    'result': 'success',
-                    'id': id
-                }
-    
+        cur.execute("SELECT * FROM offices WHERE number = %s;", (office_number,))
+        office = cur.fetchone()
+
+        if office is None:
+            db_close(conn, cur)
+            return {
+                'jsonrpc': '2.0',
+                'error': {
+                    'code': 5,
+                    'message': 'Office not found'
+                },
+                'id': id
+            }
+
+        if office['tenant'] is None:
+            db_close(conn, cur)
+            return {
+                'jsonrpc': '2.0',
+                'error': {
+                    'code': 3,
+                    'message': 'Office is not booked'
+                },
+                'id': id
+            }
+        
+        if office['tenant'] != login:
+            db_close(conn, cur)
+            return {
+                'jsonrpc': '2.0',
+                'error': {
+                    'code': 4,
+                    'message': 'You cannot cancel someone else\'s booking'
+                },
+                'id': id
+            }
+
+        cur.execute("UPDATE offices SET tenant = NULL WHERE number = %s;", (office_number,))
+        db_close(conn, cur)
+        return {
+            'jsonrpc': '2.0',
+            'result': 'success',
+            'id': id
+        }
+
+    db_close(conn, cur)
     return {
         'jsonrpc': '2.0',
         'error': {
