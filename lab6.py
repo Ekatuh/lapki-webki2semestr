@@ -10,7 +10,7 @@ lab6 = Blueprint('lab6', __name__, static_folder='static')
 
 offices = []
 for i in range(1, 11):
-    offices.append({"number": i, "tenant": ""})
+    offices.append({"number": i, "tenant": "", "price": 1000})
 
 def db_connect():
 
@@ -36,9 +36,7 @@ def db_close(conn, cur):
     cur.close()
     conn.close()
 
-@lab6.route('/')
-def home():
-    return redirect(url_for('lab6.lab'))
+
 
 @lab6.route('/lab6/')
 def lab():
