@@ -1,0 +1,43 @@
+{% block main %}
+    <form method="POST" enctype="multipart/form-data">
+        <label for="username">Имя пользователя:</label>
+        <input type="text" id="username" name="username" required>
+        <br>
+        <label for="password">Пароль:</label>
+        <input type="password" id="password" name="password" required>
+        <br>
+        <label for="full_name">Полное имя:</label>
+        <input type="text" id="full_name" name="full_name" required>
+        <br>
+        <label for="age">Возраст:</label>
+        <input type="number" id="age" name="age" required>
+        <br>
+        <label for="gender">Пол:</label>
+        <select id="gender" name="gender" required>
+            <option value="male">Мужской</option>
+            <option value="female">Женский</option>
+            <option value="other">Другой</option>
+        </select>
+        <br>
+        <label for="search_gender">Пол для поиска:</label>
+        <select id="search_gender" name="search_gender" required>
+            <option value="male">Мужской</option>
+            <option value="female">Женский</option>
+            <option value="other">Другой</option>
+        </select>
+        <br>
+        <label for="about">О себе:</label>
+        <textarea id="about" name="about"></textarea>
+        <br>
+        <label for="photo">Фотография:</label>
+        <input type="file" id="photo" name="photo" accept="image/*">
+        <br>
+        <button type="submit">Зарегистрироваться</button>
+    </form>
+
+    {% if error %}
+        <div style="color: red; margin-top: 10px;">
+            <p>{{ error }}</p>
+        </div>
+    {% endif %}
+{% endblock %}

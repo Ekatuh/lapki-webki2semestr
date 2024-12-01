@@ -231,3 +231,27 @@ def login():
 def logout():
     session.pop('login', None)  # Remove login from session
     return redirect(url_for('lab6.lab'))
+
+def db_connect():
+
+    if current_app.config['DB_TYPE'] == 'postgres':
+        conn = psycopg2.connect(dbname="webka", 
+        user="postgres", 
+        password="katya9056", 
+        host="127.0.0.1"
+        )
+        cur = conn.cursor(cursor_factory = RealDictCursor)
+
+    else:
+        dir_path = path.dirname(path.realpath(__file__))
+        db_path = path.join(dir_path, "database.db")
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+
+    return conn, cur
+
+def db_close(conn, cur):
+    conn.commit()
+    cur.close()
+    conn.close()
