@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const items = document.querySelectorAll('.user-item');
+        const nextButton = document.getElementById('next-button');
+        const backButton = document.getElementById('back-button');
+        let currentIndex = 0;
+        const itemsPerPage = 3;
+
+        function showItems() {
+            const endIndex = currentIndex + itemsPerPage;
+            items.forEach((item, index) => {
+                if (index >= currentIndex && index < endIndex) {
+                    item.style.display = 'list-item'; // Показываем элемент
+                } else {
+                    item.style.display = 'none'; // Скрываем элемент
+                }
+            });
+
+            // Обновляем состояние кнопок
+            nextButton.style.display = endIndex < items.length ? 'block' : 'none';
+            backButton.style.display = currentIndex > 0 ? 'block' : 'none';
+        }
+
+        nextButton.addEventListener('click', function() {
+            currentIndex += itemsPerPage;
+            showItems();
+        });
+
+        backButton.addEventListener('click', function() {
+            currentIndex = Math.max(0, currentIndex - itemsPerPage);
+            showItems();
+        });
+
+        showItems();
+    });
+</script>
+{% endblock %}
+{% block main %}
+    <h1>Список пользователей</h1>
+    <ul id="user-list">
+        {% for user in users %}
+            <li class="user-item" style="display: none;">  <!-- Скрываем все элементы по умолчанию -->
+                <strong>{{ user.full_name }}</strong> ({{ user.age }} лет)
+                <img src="{{ user.photo }}" alt="Profile Picture" width="100">
+                <p>О себе: {{ user.about }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+    
+    <button id="back-button" style="display: none;">Назад</button>
+    <button id="next-button" style="display: none;">Следующие</button>
+
+    <a href="/rgz/profile">Перейти в профиль</a>
+{% endblock %}

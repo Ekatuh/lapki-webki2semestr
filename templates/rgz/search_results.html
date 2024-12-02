@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block main %}
+<h1>Результаты поиска</h1>
+<ul>
+    {% for user in results %}
+        <li>{{ user.full_name }} ({{ user.age }} лет)</li>
+    {% endfor %}
+</ul>
+
+{% if not results %}
+    <p>Пользователи не найдены.</p>
+{% endif %}
+
+<a href="{{ url_for('rgz.search') }}">Новый поиск</a>
+{% endblock %}

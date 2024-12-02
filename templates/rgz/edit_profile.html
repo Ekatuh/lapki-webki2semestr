@@ -1,0 +1,74 @@
+{% block script %}
+<script>
+    document.getElementById('editProfileForm').addEventListener('submit', function(event) {
+        event.preventDefault();  // Отменяем стандартное поведение формы
+    
+        const formData = {
+            full_name: document.getElementById('full_name').value,
+            age: document.getElementById('age').value,
+            gender: document.getElementById('gender').value,
+            search_gender: document.getElementById('search_gender').value,
+            about: document.getElementById('about').value,
+            photo_url: document.getElementById('photo_url').value
+        };
+    
+        console.log('Отправляемые данные:', formData); // Проверка отправляемых данных
+    
+        fetch('/rgz/edit_profile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'  // Устанавливаем тип содержимого
+            },
+            body: JSON.stringify(formData)  // Преобразуем данные в JSON
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('Профиль успешно обновлен');
+                window.location.href = '{{ url_for("rgz.profile_view") }}';  // Перенаправление на страницу профиля
+            } else {
+                return response.json().then(error => {
+                    alert('Ошибка при обновлении профиля: ' + error.error);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+        });
+    });
+</script>
+{% endblock %}
+
+{% block main %}
+    <form id="editProfileForm" method="post">
+        <label for="full_name">Имя:</label>
+        <input type="text" id="full_name" name="full_name" value="{{ user.full_name }}" required>
+        
+        <label for="age">Возраст:</label>
+        <input type="number" id="age" name="age" value="{{ user.age }}" required>
+        
+        <label for="gender">Пол:</label>
+        <select id="gender" name="gender" required>
+            <option value="male" {% if user.gender == 'male' %}selected{% endif %}>Мужской</option>
+            <option value="female" {% if user.gender == 'female' %}selected{% endif %}>Женский</option>
+            <option value="other" {% if user.gender == 'other' %}selected{% endif %}>Другой</option>
+        </select>
+
+        <label for="search_gender">Пол для поиска:</label>
+        <select id="search_gender" name="search_gender" required>
+            <option value="male" {% if user.search_gender == 'male' %}selected{% endif %}>Мужской</option>
+            <option value="female" {% if user.search_gender == 'female' %}selected{% endif %}>Женский</option>
+            <option value="other" {% if user.search_gender == 'other' %}selected{% endif %}>Другой</option>
+            <option value="any" {% if user.search_gender == 'any' %}selected{% endif %}>Любой</option>
+        </select>
+
+        <label for="about">О себе:</label>
+        <textarea id="about" name="about" required>{{ user.about }}</textarea>
+
+        <label for="photo_url">URL фотографии:</label>
+        <input type="text" id="photo_url" name="photo_url" value="{{ user.photo }}">
+
+        <button type="submit">Сохранить изменения</button>
+    </form>
+
+    <a href="{{ url_for('rgz.profile_view') }}">Назад к профилю</a>
+{% endblock %} 

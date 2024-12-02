@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block main %}
+<h1>Поиск пользователей</h1>
+<form method="POST" action="{{ url_for('rgz.search') }}">
+    <label for="name">Имя:</label>
+    <input type="text" id="name" name="name">
+    <br>
+    <label for="age">Возраст:</label>
+    <input type="number" id="age" name="age">
+    <br>
+    <button type="submit">Поиск</button>
+</form>
+{% endblock %}
