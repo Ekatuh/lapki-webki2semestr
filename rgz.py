@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, url_for, render_template, render_template_string, abort, request, make_response, session,  current_app
+from flask import Blueprint, redirect, url_for, render_template, render_template_string, abort, request, make_response, session,  current_app, jsonify
 from functools import wraps
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -71,6 +71,9 @@ def register():
 
     if not is_valid_username_password(username) or not is_valid_username_password(password):
         return render_template('rgz/register.html', error='Логин и пароль могут содержать только латинские буквы, цифры и знаки препинания.')
+
+    if int(age) < 18:
+        return render_template('rgz/register.html', error='Вам нельзя находиться на данной платформе, ограничение по возрасту')
 
     conn, cur = db_connect()
     try:
@@ -149,53 +152,88 @@ def login():
 def edit_profile_view():
     username = session.get('login')
     if not username:
-        return {'error': 'Unauthorized'}, 401
+        return redirect(url_for('rgz.login'))  # Redirect to login if not authenticated
 
-    if request.method == 'POST':
-        data = request.get_json()  # Получаем данные JSON
-        if not data:
-            return {'error': 'Invalid JSON'}, 400  # Проверка на случай, если данные не были отправлены
-
-        full_name = data.get('full_name')
-        age = data.get('age')
-        gender = data.get('gender')  
-        search_gender = data.get('search_gender')  
-        about = data.get('about')
-        photo_url = data.get('photo_url')
-
-        # Логика обновления профиля
-        conn, cur = db_connect()
-        try:
-            if current_app.config['DB_TYPE'] == 'postgres':
-                cur.execute("""
-                    UPDATE users 
-                    SET full_name = %s, age = %s, gender = %s, search_gender = %s, about = %s, photo = %s 
-                    WHERE username = %s;
-                """, (full_name, age, gender, search_gender, about, photo_url, username))
-            else:
-                cur.execute("""
-                    UPDATE users 
-                    SET full_name = ?, age = ?, gender = ?, search_gender = ?, about = ?, photo = ? 
-                    WHERE username = ?;
-                """, (full_name, age, gender, search_gender, about, photo_url, username))
-
-            conn.commit()
-            return {'message': 'Profile updated successfully'}, 200
-        except Exception as e:
-            return {'error': str(e)}, 500  # Возвращаем ошибку, если что-то пошло не так
-        finally:
-            db_close(conn, cur)
-
-    # Если метод GET, отображаем форму редактирования
     conn, cur = db_connect()
     try:
-        if current_app.config['DB_TYPE'] == 'postgres':
-            cur.execute("SELECT * FROM users WHERE username=%s;", (username,))
-        else:
-            cur.execute("SELECT * FROM users WHERE username=?;", (username,))
+        if request.method == 'GET':
+            # Fetch current user data
+            if current_app.config['DB_TYPE'] == 'postgres':
+                cur.execute("SELECT * FROM users WHERE username=%s;", (username,))
+            else:
+                cur.execute("SELECT * FROM users WHERE username=?;", (username,))
+            user = cur.fetchone()
+            return render_template('rgz/edit_profile.html', user=user)
 
-        user = cur.fetchone()
-        return render_template('rgz/edit_profile.html', user=user)  # Отображение шаблона редактирования профиля
+        # Handle POST request to update user data
+        full_name = request.form.get('full_name')
+        age = request.form.get('age')
+        gender = request.form.get('gender')
+        search_gender = request.form.get('search_gender')
+        about = request.form.get('about')
+        photo_url = request.form.get('photo_url')  # New photo URL if provided
+
+        # Update user information in the database
+        if current_app.config['DB_TYPE'] == 'postgres':
+            cur.execute("""
+                UPDATE users 
+                SET full_name = %s, age = %s, gender = %s, search_gender = %s, about = %s, photo = %s 
+                WHERE username = %s;
+            """, (full_name, age, gender, search_gender, about, photo_url, username))
+        else:
+            cur.execute("""
+                UPDATE users 
+                SET full_name = ?, age = ?, gender = ?, search_gender = ?, about = ?, photo = ? 
+                WHERE username = ?;
+            """, (full_name, age, gender, search_gender, about, photo_url, username))
+
+        conn.commit()
+        return redirect(url_for('rgz.profile_view'))  # Redirect to profile view after update
+    finally:
+        db_close(conn, cur)
+
+@rgz.route('/api/edit_profile', methods=['GET', 'POST'])
+def edit_profile_api():
+    username = session.get('login')
+    if not username:
+        return {'error': 'Unauthorized'}, 401  # Return error if not authenticated
+
+    conn, cur = db_connect()
+    try:
+        if request.method == 'GET':
+            # Fetch current user data
+            if current_app.config['DB_TYPE'] == 'postgres':
+                cur.execute("SELECT * FROM users WHERE username=%s;", (username,))
+            else:
+                cur.execute("SELECT * FROM users WHERE username=?;", (username,))
+            user = cur.fetchone()
+            return jsonify(user)  # Return user data as JSON
+
+        # Handle POST request to update user data
+        data = request.get_json()
+        full_name = data.get('full_name')
+        age = data.get('age')
+        gender = data.get('gender')
+        search_gender = data.get('search_gender')
+        about = data.get('about')
+        photo_url = data.get('photo_url')  # New photo URL if provided
+
+        # Update user information in the database
+        if current_app.config['DB_TYPE'] == 'postgres':
+            cur.execute("""
+                UPDATE users 
+                SET full_name = %s, age = %s, gender = %s, search_gender = %s, about = %s, photo = %s 
+                WHERE username = %s;
+            """, (full_name, age, gender, search_gender, about, photo_url, username))
+        else:
+            cur.execute("""
+                UPDATE users 
+                SET full_name = ?, age = ?, gender = ?, search_gender = ?, about = ?, photo = ? 
+                WHERE username = ?;
+            """, (full_name, age, gender, search_gender, about, photo_url, username))
+
+        conn.commit()
+        return {'message': 'Profile updated successfully'}, 200  # Return success message
     finally:
         db_close(conn, cur)
 
@@ -316,30 +354,67 @@ def list_users():
         else:
             return redirect(url_for('rgz.login'))  # Если пользователь не авторизован, перенаправляем на страницу входа
 
-        # Получаем всех пользователей, исключая текущего, скрытых и фильтруем по полу
-        if current_app.config['DB_TYPE'] == 'postgres':
-            cur.execute("""
-                SELECT full_name, username, age, photo, about 
-                FROM users 
-                WHERE username != %s 
-                AND is_hidden = FALSE
-                AND gender = %s 
-                AND search_gender = %s;
-            """, (username, search_gender, current_gender))
-        else:
-            cur.execute("""
-                SELECT full_name, username, age, photo, about 
-                FROM users 
-                WHERE username != ? 
-                AND is_hidden = 0
-                AND gender = ? 
-                AND search_gender = ?;
-            """, (username, search_gender, current_gender))
+        # Получаем параметры поиска
+        search_name = request.args.get('name', '')
+        search_age = request.args.get('age', '')
 
+        # Получаем всех пользователей, исключая текущего, скрытых и фильтруем по полу
+        query = """
+            SELECT full_name, username, age, photo, about 
+            FROM users 
+            WHERE username != %s 
+            AND is_hidden = FALSE
+            AND gender = %s 
+            AND search_gender = %s
+        """
+        params = [username, search_gender, current_gender]
+
+        if search_name:
+            query += " AND full_name ILIKE %s"
+            params.append(f'%{search_name}%')  # Use ILIKE for case-insensitive search
+
+        if search_age:
+            query += " AND age = %s"
+            params.append(search_age)
+
+        cur.execute(query, params)
         users = cur.fetchall()  # Получаем всех пользователей, соответствующих критериям
+
+        if not users:
+            return render_template('rgz/user_list.html', users=[], error="Пользователь не найден.")
+
         return render_template('rgz/user_list.html', users=users)
 
     finally:
         db_close(conn, cur)
 
 
+@rgz.route('/api/search_users', methods=['GET'])
+def search_users():
+    name = request.args.get('name', '')
+    age = request.args.get('age', '')
+
+    conn, cur = db_connect()
+    try:
+        query = "SELECT full_name, username, age, photo, about FROM users WHERE is_hidden = FALSE"
+        params = []
+
+        # Add conditions based on the search parameters
+        if name:
+            query += " AND full_name ILIKE %s"
+            params.append(f'%{name}%')  # Use ILIKE for case-insensitive search in PostgreSQL
+
+        if age:
+            query += " AND age = %s"
+            params.append(age)
+
+        if current_app.config['DB_TYPE'] == 'postgres':
+            cur.execute(query, params)
+        else:
+            cur.execute(query.replace('ILIKE', 'LIKE'), params)  # Replace ILIKE with LIKE for SQLite
+
+        users = cur.fetchall()
+        return jsonify(users)
+
+    finally:
+        db_close(conn, cur)

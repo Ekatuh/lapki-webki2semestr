@@ -39,16 +39,27 @@
 {% endblock %}
 {% block main %}
     <h1>Список пользователей</h1>
+        
+    <form id="search-form" method="GET" action="{{ url_for('rgz.list_users') }}">
+        <input type="text" name="name" placeholder="Имя" value="{{ request.args.get('name', '') }}">
+        <input type="number" name="age" placeholder="Возраст" value="{{ request.args.get('age', '') }}">
+        <button type="submit">Поиск</button>
+    </form>
+
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
     <ul id="user-list">
         {% for user in users %}
-            <li class="user-item" style="display: none;">  <!-- Скрываем все элементы по умолчанию -->
+            <li class="user-item">
                 <strong>{{ user.full_name }}</strong> ({{ user.age }} лет)
                 <img src="{{ user.photo }}" alt="Profile Picture" width="100">
                 <p>О себе: {{ user.about }}</p>
             </li>
         {% endfor %}
     </ul>
-    
+
     <button id="back-button" style="display: none;">Назад</button>
     <button id="next-button" style="display: none;">Следующие</button>
 

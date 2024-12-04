@@ -1,43 +1,167 @@
-{% block main %}
-    <form method="POST" enctype="multipart/form-data">
-        <label for="username">Имя пользователя:</label>
-        <input type="text" id="username" name="username" required>
-        <br>
-        <label for="password">Пароль:</label>
-        <input type="password" id="password" name="password" required>
-        <br>
-        <label for="full_name">Полное имя:</label>
-        <input type="text" id="full_name" name="full_name" required>
-        <br>
-        <label for="age">Возраст:</label>
-        <input type="number" id="age" name="age" required>
-        <br>
-        <label for="gender">Пол:</label>
-        <select id="gender" name="gender" required>
-            <option value="male">Мужской</option>
-            <option value="female">Женский</option>
-            <option value="other">Другой</option>
-        </select>
-        <br>
-        <label for="search_gender">Пол для поиска:</label>
-        <select id="search_gender" name="search_gender" required>
-            <option value="male">Мужской</option>
-            <option value="female">Женский</option>
-            <option value="other">Другой</option>
-        </select>
-        <br>
-        <label for="about">О себе:</label>
-        <textarea id="about" name="about"></textarea>
-        <br>
-        <label for="photo_url">URL фотографии:</label>
-        <input type="text" id="photo_url" name="photo_url" required>
-        <br>
-        <button type="submit">Зарегистрироваться</button>
-    </form>
+<head>
+    <title>{% block title %}Romance Club. Регистрация{% endblock %}</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='Фавиконка2.png') }}">
+    <style>
+        .video-container {
+            position: fixed; /* Keep video in background */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Place video behind other content */
+        }
+        
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Cover the entire background */
+        }
+        footer {
+            
+            bottom: 0;
+            right: 0;
+            padding: 10px; 
+            font-size: 0.8em; 
+            text-align: right; 
+            font-family: sans-serif;
+            font-size: 10pt;
+            margin-top: 700px;
+        }
+        .container {
+            border: 2px solid rgb(145, 142, 145);
+            background-color: rgba(255, 146, 248, 0.5); 
+            padding: 20px; 
+            width: 500px; 
+            height: 700px;
+            margin: 0 auto; 
+            position: absolute; 
+            top: 52%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50px;
+        }
+        h1 {
+            font-family: fantasy;
+            text-align: center;
+            color: rgb(191, 0, 255);
+            font-size: 30pt;
+            margin: 5 0px;
+            font-weight: bold;
+        }
+        label {
+            display: block; 
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="password"],
+        input[type="number"],
+        select {
+            width: calc(100% - 20px); 
+            padding: 8px; 
+            margin-bottom: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; 
+        }
 
-    {% if error %}
-        <div style="color: red; margin-top: 10px;">
-            <p>{{ error }}</p>
-        </div>
-    {% endif %}
-{% endblock %}
+        textarea {
+            width: calc(100% - 20px);
+            height: 70px; 
+            padding: 8px;
+            margin-bottom: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+
+        button[type="submit"] {
+            padding: 10px 15px; 
+        }
+        textarea {
+            height: 100px;
+            resize: vertical; 
+        }
+        button[type="submit"] {
+            background-color: rgb(131, 0, 174);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            margin-left: 160px;
+            border: 5px solid rgb(99, 0, 132);
+        }
+        button[type="submit"]:hover {
+            background-color: rgb(165, 0, 254);
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+        a {
+            display: block;
+            text-align: center;
+            margin-top: -10px;
+            text-decoration: none;
+            color: rgb(133, 0, 178);
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <video autoplay muted loop>
+            <source src="{{ url_for('static', filename='Облачка.mp4')}}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+{% block main %}
+    <div class="container">
+        <h1>Регистрация</h1>
+        <form method="POST" enctype="multipart/form-data">
+            <label for="username">Логин:</label>
+            <input type="text" id="username" name="username" required>
+            <br>
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" name="password" required>
+            <br>
+            <label for="full_name">Полное имя:</label>
+            <input type="text" id="full_name" name="full_name" required>
+            <br>
+            <label for="age">Возраст:</label>
+            <input type="number" id="age" name="age" required>
+            <br>
+            <label for="gender">Пол:</label>
+            <select id="gender" name="gender" required>
+                <option value="male">Мужской</option>
+                <option value="female">Женский</option>
+                <option value="other">Другой</option>
+            </select>
+            <br>
+            <label for="search_gender">Пол для поиска:</label>
+            <select id="search_gender" name="search_gender" required>
+                <option value="male">Мужской</option>
+                <option value="female">Женский</option>
+                <option value="other">Другой</option>
+            </select>
+            <br>
+            <label for="about">О себе(Необязательно):</label>
+            <textarea id="about" name="about"></textarea>
+            <br>
+            <label for="photo_url">URL фотографии:</label>
+            <input type="text" id="photo_url" name="photo_url" required>
+            <br>
+            <button type="submit">Зарегистрироваться</button>
+        </form>
+        {% if error %}
+            <div class="error">
+                <p>{{ error }}</p>
+            </div>
+        {% endif %}
+        <a href="/rgz/login">Если у тебя есть аккаунт, то нажми сюды!</a>
+    </div>
+    <footer><p>&copy;Кузьменко Екатерина, ФБИ-23</p></footer> 
+    {% endblock %} 
+</body>
