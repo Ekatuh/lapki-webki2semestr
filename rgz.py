@@ -336,6 +336,10 @@ def get_users():
         users = cur.fetchall()
         return jsonify(users)
 
+    except Exception as e:
+        current_app.logger.error(f"Error fetching users: {str(e)}")
+        return jsonify({'error': 'Internal Server Error'}), 500
+
     finally:
         db_close(conn, cur)
 
@@ -391,7 +395,7 @@ def list_users():
         if current_app.config['DB_TYPE'] == 'postgres':
             cur.execute(query, params)
         else:
-            cur.execute(query.replace('%s', '?'), params)  # Заменяем %s на ? для SQLite
+            cur.execute(query.replace('%s', '?'), params) 
 
         users = cur.fetchall()
 
@@ -399,6 +403,10 @@ def list_users():
             return render_template('rgz/user_list.html', users=[], error="Пользователь не найден.")
 
         return render_template('rgz/user_list.html', users=users)
+
+    except Exception as e:
+        current_app.logger.error(f"Error fetching user list: {str(e)}")
+        return render_template('rgz/user_list.html', users=[], error="Ошибка при получении списка пользователей.")
 
     finally:
         db_close(conn, cur)
