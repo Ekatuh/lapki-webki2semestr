@@ -266,7 +266,10 @@ def open_profile():
 
     conn, cur = db_connect()
     try:
-        cur.execute("UPDATE users SET is_hidden = FALSE WHERE username = %s;", (username,))
+        if current_app.config['DB_TYPE'] == 'postgres':
+            cur.execute("UPDATE users SET is_hidden = FALSE WHERE username = %s;", (username,))
+        else:
+            cur.execute("UPDATE users SET is_hidden = FALSE WHERE username = ?;", (username,))
         conn.commit()
         return {'message': 'Profile opened successfully'}, 200
     except Exception as e:
