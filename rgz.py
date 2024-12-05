@@ -381,17 +381,17 @@ def list_users():
         if search_name:
             if current_app.config['DB_TYPE'] == 'postgres':
                 query += " AND full_name ILIKE %s"
-                params.append(f'%{search_name}%')  # Используем ILIKE для PostgreSQL
+                params.append(f'%{search_name}%')  
             else:
-                query += " AND lower(full_name) LIKE lower(?)"  # Используем lower для SQLite
-                params.append(f'%{search_name.lower()}%')  # Приводим к нижнему регистру
+                query += " AND lower(full_name) LIKE lower(?)"  
+                params.append(f'%{search_name.lower()}%')  
 
         # Обработка поиска по возрасту
         if search_age:
             query += " AND age = %s"
             params.append(search_age)
 
-        # Выполняем запрос
+        
         if current_app.config['DB_TYPE'] == 'postgres':
             cur.execute(query, params)
         else:
@@ -424,8 +424,11 @@ def search_users():
 
         # Add conditions based on the search parameters
         if name:
-            query += " AND full_name ILIKE %s"
-            params.append(f'%{name}%')  # Use ILIKE for case-insensitive search in PostgreSQL
+            if current_app.config['DB_TYPE'] == 'postgres':
+                query += " AND full_name ILIKE %s"
+            else:
+                query += " AND lower(full_name) LIKE lower(?)"
+            params.append(f'%{name}%')
 
         if age:
             query += " AND age = %s"
@@ -434,7 +437,7 @@ def search_users():
         if current_app.config['DB_TYPE'] == 'postgres':
             cur.execute(query, params)
         else:
-            cur.execute(query.replace('ILIKE', 'LIKE'), params)  # Replace ILIKE with LIKE for SQLite
+            cur.execute(query, params)
 
         users = cur.fetchall()
         return jsonify(users)
