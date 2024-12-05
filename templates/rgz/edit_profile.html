@@ -1,4 +1,102 @@
-{% extends "base.html" %}
+<head>
+    <title>{% block title %}Romance Club{% endblock %}</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='Фавиконка2.png') }}">
+    <style>
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+        }
+        footer {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            padding: 10px; 
+            font-size: 0.8em; 
+            text-align: right; 
+            font-family: sans-serif;
+            font-size: 10pt;
+        }
+        .container {
+            border: 2px solid rgb(145, 142, 145);
+            background-color: rgba(255, 146, 248, 0.5); 
+            padding: 20px; 
+            width: 500px; 
+            height: 600px;
+            margin: 0 auto; 
+            position: absolute; 
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50px;
+        }
+        h1 {
+            font-family: fantasy;
+            text-align: center;
+            color: rgb(191, 0, 255);
+            font-size: 30pt;
+            margin: 60 0px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        label {
+            display: block;
+            margin-top: -40px;
+            font-weight: bold;
+            color: rgb(191, 0, 255);
+            
+        }
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 40px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            width: 500px;
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
+            
+        }
+        button[type="submit"] {
+            background-color: rgb(191, 0, 255);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            width: 100%; /* Make button full width */
+            margin-top: -20px;
+        }
+        button[type="submit"]:hover {
+            background-color: purple;
+        }
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+            text-decoration: none;
+            color: rgb(191, 0, 255);
+            font-weight: bold;
+        }
+    </style>
+</head>
 {% block script %}
 <script>
     function editProfile() {
@@ -45,7 +143,7 @@
         }).then(response => {
             if (response.ok) {
                 alert('Профиль успешно обновлён');
-                window.location.href = '/rgz/profile';  // Redirect to profile view
+                
             } else {
                 return response.json().then(error => {
                     alert('Ошибка при обновлении профиля: ' + error.error);
@@ -57,35 +155,45 @@
     }
 </script>
 {% endblock %}
+<body>
+    <div class="video-container">
+        <video autoplay muted loop>
+            <source src="{{ url_for('static', filename='Облачка.mp4')}}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
 {% block main %}
-    <h1>Редактировать анкету</h1>
+    <div class="container">
+        <h1>Редактировать анкету</h1>
 
-    <form id="editProfileForm" method="POST" onsubmit="submitEditProfile(event)">
-        <label for="full_name">Полное имя:</label>
-        <input type="text" id="full_name" name="full_name" value="{{ user.full_name }}" required>
+        <form id="editProfileForm" method="POST" onsubmit="submitEditProfile(event)">
+            <label for="full_name">Полное имя:</label>
+            <input type="text" id="full_name" name="full_name" value="{{ user.full_name }}" required>
 
-        <label for="age">Возраст:</label>
-        <input type="number" id="age" name="age" value="{{ user.age }}" required>
+            <label for="age">Возраст:</label>
+            <input type="number" id="age" name="age" value="{{ user.age }}" required>
 
-        <label for="gender">Пол:</label>
-        <select id="gender" name="gender" required>
-            <option value="male" {% if user.gender == 'male' %}selected{% endif %}>Мужской</option>
-            <option value="female" {% if user.gender == 'female' %}selected{% endif %}>Женский</option>
-        </select>
+            <label for="gender">Пол:</label>
+            <select id="gender" name="gender" required>
+                <option value="male" {% if user.gender == 'male' %}selected{% endif %}>Мужской</option>
+                <option value="female" {% if user.gender == 'female' %}selected{% endif %}>Женский</option>
+            </select>
 
-        <label for="search_gender">Ищете:</label>
-        <select id="search_gender" name="search_gender" required>
-            <option value="male" {% if user.search_gender == 'male' %}selected{% endif %}>Мужчин</option>
-            <option value="female" {% if user.search_gender == 'female' %}selected{% endif %}>Женщин</option>
-        </select>
+            <label for="search_gender">Ищете:</label>
+            <select id="search_gender" name="search_gender" required>
+                <option value="male" {% if user.search_gender == 'male' %}selected{% endif %}>Мужчин</option>
+                <option value="female" {% if user.search_gender == 'female' %}selected{% endif %}>Женщин</option>
+            </select>
 
-        <label for="about">О себе:</label>
-        <textarea id="about" name="about">{{ user.about }}</textarea>
+            <label for="about">О себе:</label>
+            <textarea id="about" name="about">{{ user.about }}</textarea>
 
-        <label for="photo_url">URL фотографии:</label>
-        <input type="text" id="photo_url" name="photo_url" value="{{ user.photo }}">
+            <label for="photo_url">URL фотографии:</label>
+            <input type="text" id="photo_url" name="photo_url" value="{{ user.photo }}">
 
-        <button type="submit">Сохранить изменения</button>
-    </form>
-    <a href="{{ url_for('rgz.profile_view') }}">Назад к профилю</a>
+            <button type="submit">Сохранить изменения</button>
+        </form>
+        <a href="{{ url_for('rgz.profile_view') }}">Назад к профилю</a>
+    </div>
+    <footer><p> &copy; Кузьменко Екатерина, ФБИ-23</p></footer>
 {% endblock %}
