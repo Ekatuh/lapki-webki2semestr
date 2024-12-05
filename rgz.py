@@ -246,7 +246,11 @@ def hide_profile():
     conn, cur = db_connect()
     try:
         # Переключаем состояние видимости профиля
-        cur.execute("UPDATE users SET is_hidden = NOT is_hidden WHERE username = %s;", (username,))
+        if current_app.config['DB_TYPE'] == 'postgres':
+            cur.execute("UPDATE users SET is_hidden = NOT is_hidden WHERE username = %s;", (username,))
+        else:
+            cur.execute("UPDATE users SET is_hidden = NOT is_hidden WHERE username = ?;", (username,))
+
         conn.commit()
         return {'message': 'Profile visibility toggled successfully'}, 200
     except Exception as e:
@@ -337,8 +341,6 @@ def list_users():
     conn, cur = db_connect()
     try:
         username = session.get('login')
-        
-        # Получаем информацию о текущем пользователе
         if username:
             if current_app.config['DB_TYPE'] == 'postgres':
                 cur.execute("SELECT gender, search_gender FROM users WHERE username=%s;", (username,))
@@ -347,18 +349,17 @@ def list_users():
                 
             current_user = cur.fetchone()
             if current_user is None:
-                return redirect(url_for('rgz.login'))  # Если пользователь не найден, перенаправляем на страницу входа
+                return redirect(url_for('rgz.login'))
 
             current_gender = current_user['gender']
             search_gender = current_user['search_gender']
         else:
-            return redirect(url_for('rgz.login'))  # Если пользователь не авторизован, перенаправляем на страницу входа
+            return redirect(url_for('rgz.login'))
 
-        # Получаем параметры поиска
         search_name = request.args.get('name', '')
         search_age = request.args.get('age', '')
 
-        # Получаем всех пользователей, исключая текущего, скрытых и фильтруем по полу
+        # Начинаем формировать запрос
         query = """
             SELECT full_name, username, age, photo, about 
             FROM users 
@@ -369,16 +370,27 @@ def list_users():
         """
         params = [username, search_gender, current_gender]
 
+        # Обработка поиска по имени
         if search_name:
-            query += " AND full_name ILIKE %s"
-            params.append(f'%{search_name}%')  # Use ILIKE for case-insensitive search
+            if current_app.config['DB_TYPE'] == 'postgres':
+                query += " AND full_name ILIKE %s"
+                params.append(f'%{search_name}%')  # Используем ILIKE для PostgreSQL
+            else:
+                query += " AND lower(full_name) LIKE lower(?)"  # Используем lower для SQLite
+                params.append(f'%{search_name.lower()}%')  # Приводим к нижнему регистру
 
+        # Обработка поиска по возрасту
         if search_age:
             query += " AND age = %s"
             params.append(search_age)
 
-        cur.execute(query, params)
-        users = cur.fetchall()  # Получаем всех пользователей, соответствующих критериям
+        # Выполняем запрос
+        if current_app.config['DB_TYPE'] == 'postgres':
+            cur.execute(query, params)
+        else:
+            cur.execute(query.replace('%s', '?'), params)  # Заменяем %s на ? для SQLite
+
+        users = cur.fetchall()
 
         if not users:
             return render_template('rgz/user_list.html', users=[], error="Пользователь не найден.")
