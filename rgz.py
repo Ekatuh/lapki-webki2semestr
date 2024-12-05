@@ -359,7 +359,7 @@ def list_users():
         else:
             return redirect(url_for('rgz.login'))
 
-        search_name = request.args.get('name', '')
+        search_name = request.args.get('name', '').strip()  # Удаляем пробелы
         search_age = request.args.get('age', '')
 
         # Начинаем формировать запрос
