@@ -46,24 +46,24 @@ films = [
     },
 ]
 
-@lab7.route('/lab7/rest-api/flims/', methods=['GET'])
+@lab7.route('/lab7/rest-api/films/', methods=['GET'])  # Исправлено на 'films'
 def get_films():
     return films
 
-@lab7.route('/lab7/rest-api/flims/<int:id>', methods=['GET'])
+@lab7.route('/lab7/rest-api/films/<int:id>', methods=['GET'])  # Исправлено на 'films'
 def get_film(id):
     if id < 0 or id >= len(films):
         abort(404)
     return films[id]
-    
-@lab7.route('/lab7/rest-api/flims/<int:id>', methods=['DELETE'])
+
+@lab7.route('/lab7/rest-api/films/<int:id>', methods=['DELETE'])  # Исправлено на 'films'
 def del_film(id):
     if id < 0 or id >= len(films):
         abort(404)  
     del films[id]
     return '', 204
 
-@lab7.route('/lab7/rest-api/flims/<int:id>', methods=['PUT'])
+@lab7.route('/lab7/rest-api/films/<int:id>', methods=['PUT'])  # Исправлено на 'films'
 def put_film(id):
     if id < 0 or id >= len(films):
         abort(404)  
@@ -71,7 +71,7 @@ def put_film(id):
     films[id] = film
     return films[id]
 
-@lab7.route('/lab7/rest-api/flims/', methods=['POST'])
+@lab7.route('/lab7/rest-api/films/', methods=['POST'])  # Исправлено на 'films'
 def add_film():
     film = request.get_json() 
     films.append(film)  
