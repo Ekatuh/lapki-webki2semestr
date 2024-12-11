@@ -5,20 +5,94 @@
 {% block script %}
 <script src="{{ url_for('static', filename='lab7/main.js') }}"></script>
 <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        background-color: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #ffcccb;
+        color: white;
+    }
+
+    tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    button {
+        background-color: #ffcccb; /* Зеленый цвет */
+        color: white; /* Белый текст */
+        border: none; /* Без границы */
+        padding: 10px 15px; /* Отступы */
+        text-align: center; /* Центрирование текста */
+        text-decoration: none; /* Без подчеркивания */
+        display: inline-block; /* Встроенный блок */
+        font-size: 16px; /* Размер шрифта */
+        margin: 4px 2px; /* Отступы */
+        cursor: pointer; /* Указатель при наведении */
+        border-radius: 5px; /* Закругленные углы */
+        transition: background-color 0.3s; /* Плавный переход */
+    }
+
+    button:hover {
+        background-color: #ffcccb; /* Темнее при наведении */
+    }
+
     .modal {
         display: none; /* Скрыто по умолчанию */
         z-index: 100; /* Поверх других элементов */
-        box-shadow: 3px 3px 5px black; /* Тень */
+        box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5); /* Тень */
         background: white;
         width: 500px;
         left: 50%;
         top: 220px;
-        margin-left: -200px;
+        margin-left: -250px; /* Центрирование модального окна */
         position: absolute;
         padding: 20px;
+        border-radius: 8px; /* Закругленные углы */
     }
+
+    .modal label {
+        display: block; /* Блок для меток */
+        margin-bottom: 10px; /* Отступы между метками */
+    }
+
     .error-message {
         color: red;
+        font-size: 14px; /* Размер шрифта для сообщения об ошибке */
+    }
+
+    /* Фон для затемнения при открытом модальном окне */
+    .modal-overlay {
+        display: none; /* Скрыто по умолчанию */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); /* Полупрозрачный черный фон */
+        z-index: 99; /* Под модальным окном */
     }
 </style>
 {% endblock %}
@@ -45,29 +119,29 @@
         <button onclick="addFilm()">Добавить фильм</button>
     </div>
 
+    <div class="modal-overlay" id="modal-overlay" onclick="cancel()"></div> <!-- Фон для модального окна -->
+
     <div class="modal">
         <input type="hidden" id="id">
         <label>
             Название фильма на русском:
             <input type="text" id="title">
-        </label><br>
+        </label>
 
         <label>
             Название фильма на оригинальном языке<br>
             <i>(Если фильм русский, то оставьте пустым):</i>
             <input type="text" id="title_ru">
-        </label><br>
-
-        <label>
+        </label <label>
             Год выпуска:
             <input type="number" id="year">
-        </label><br>
+        </label>
 
         <label>
             Описание:
             <textarea id="description"></textarea>
             <div id="description-error" class="error-message"></div>
-        </label><br>
+        </label>
 
         <button onclick="sendFilm()">ОК</button>
         <button onclick="cancel()">Отмена</button>

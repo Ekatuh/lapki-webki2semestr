@@ -9,13 +9,13 @@ function fillFilmList() {
         for(let i = 0; i < films.length; i++) {
             let tr = document.createElement('tr');
 
-            let tdTitle = document.createElement('td');
             let tdTitleRus = document.createElement('td');
+            let tdTitle = document.createElement('td'); // Оригинальное название
             let tdYear = document.createElement('td');
             let tdActions = document.createElement('td');
 
-            tdTitle.innerText = films[i].title == films[i].title_ru ? '' : films[i].title;
-            tdTitleRus.innerText = films[i].title_ru;
+            tdTitleRus.innerText = films[i].title_ru; // Русское название
+            tdTitle.innerHTML = films[i].title ? `<i>(${films[i].title})</i>` : ''; // Оригинальное название в курсиве и в скобках
             tdYear.innerText = films[i].year;
 
             let editButton = document.createElement('button');
@@ -23,7 +23,6 @@ function fillFilmList() {
             editButton.onclick = function()  {
                 editFilm(i);
             }
-            
 
             let delButton = document.createElement('button');
             delButton.innerText = 'Удалить';
@@ -34,15 +33,14 @@ function fillFilmList() {
             tdActions.append(editButton);
             tdActions.append(delButton);
 
-            tr.append(tdTitle);
             tr.append(tdTitleRus);
+            tr.append(tdTitle); 
             tr.append(tdYear);
             tr.append(tdActions);
 
             tbody.append(tr);
         }
     })
-   
 }
 
 function deleteFilm(id, title) {
