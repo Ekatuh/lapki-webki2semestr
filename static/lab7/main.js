@@ -57,6 +57,7 @@ function deleteFilm(id, title) {
 
 function showModal() {
     document.querySelector('div.modal').style.display = 'block';
+    document.getElementById('description-error').innerText = ''; 
 }
 
 function hideModal() {
@@ -79,7 +80,7 @@ function sendFilm() {
     const id = document.getElementById('id').value
     const film = {
         title: document.getElementById('title').value,
-        title_ru: document.getElementById('title_ru').value, // Исправлено
+        title_ru: document.getElementById('title_ru').value, 
         year: document.getElementById('year').value,
         description: document.getElementById('description').value 
     }
@@ -92,9 +93,16 @@ function sendFilm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(film)
     })
-    .then(function() {
-        fillFilmList();
-        hideModal();
+    .then(function(resp) {
+        if(resp.ok) {
+            fillFilmList();
+            hideModal();
+        }
+        return resp.json();
+    })
+    .then(function(errors) {
+        if(errors.description)
+            document.getElementById('description-error').innerText = errors.description;
     })
 }
 
