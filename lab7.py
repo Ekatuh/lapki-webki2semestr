@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, url_for, render_template, render_template_string, abort, request, make_response, session,  current_app
+from flask import Blueprint, redirect, url_for, render_template, render_template_string, abort, request, make_response, session,  current_app, jsonify
 from functools import wraps
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -46,11 +46,11 @@ films = [
     },
 ]
 
-@lab7.route('/lab7/rest-api/films/', methods=['GET'])  # Исправлено на 'films'
+@lab7.route('/lab7/rest-api/films/', methods=['GET'])  
 def get_films():
-    return films
+    return jsonify (films)
 
-@lab7.route('/lab7/rest-api/films/<int:id>', methods=['GET'])  # Исправлено на 'films'
+@lab7.route('/lab7/rest-api/films/<int:id>', methods=['GET'])  
 def get_film(id):
     if id < 0 or id >= len(films):
         abort(404)
