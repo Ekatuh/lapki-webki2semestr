@@ -1,12 +1,12 @@
 function fillFilmList() {
     fetch('/lab7/rest-api/films/') 
-    .then(function (data) {
-        return data.json();
+    .then(function (response) {
+        return response.json();
     })
     .then(function (films) {
         let tbody = document.getElementById('film-list');
         tbody.innerHTML = '';
-        for(let i = 0; i < films.length; i++) {
+        films.forEach(function (film) {
             let tr = document.createElement('tr');
 
             let tdTitleRus = document.createElement('td');
@@ -14,20 +14,20 @@ function fillFilmList() {
             let tdYear = document.createElement('td');
             let tdActions = document.createElement('td');
 
-            tdTitleRus.innerText = films[i].title_ru; // Русское название
-            tdTitle.innerHTML = films[i].title ? `<i>(${films[i].title})</i>` : ''; // Оригинальное название в курсиве и в скобках
-            tdYear.innerText = films[i].year;
+            tdTitleRus.innerText = film.title_ru; // Русское название
+            tdTitle.innerHTML = film.title ? `<i>(${film.title})</i>` : ''; // Оригинальное название в курсиве и в скобках
+            tdYear.innerText = film.year;
 
             let editButton = document.createElement('button');
             editButton.innerText = 'Редактировать';
             editButton.onclick = function()  {
-                editFilm(i);
+                editFilm(film.id); // Используем film.id
             }
 
             let delButton = document.createElement('button');
             delButton.innerText = 'Удалить';
             delButton.onclick = function() {
-                deleteFilm(i, films[i].title_ru);
+                deleteFilm(film.id, film.title_ru); // Используем film.id
             }
             
             tdActions.append(editButton);
@@ -39,18 +39,24 @@ function fillFilmList() {
             tr.append(tdActions);
 
             tbody.append(tr);
-        }
+        });
     })
+    .catch(error => console.error('Ошибка при загрузке списка фильмов:', error));
 }
 
 function deleteFilm(id, title) {
-    if(! confirm(`Вы точно хотите удалить фильм "${title}"?`))
+    if (!confirm(`Вы точно хотите удалить фильм "${title}"?`))
         return;
 
-    fetch(`/lab7/rest-api/films/${id}`, {method: 'DELETE'})
-        .then(function () {
-            fillFilmList();
+    fetch(`/lab7/rest-api/films/${id}`, { method: 'DELETE' })
+        .then(function (response) {
+            if (response.ok) {
+                fillFilmList();
+            } else {
+                console.error('Ошибка при удалении фильма:', response.statusText);
+            }
         })
+        .catch(error => console.error('Ошибка:', error));
 }
 
 function showModal() {
@@ -74,17 +80,18 @@ function addFilm() {
     document.getElementById('description').value = '';
     showModal();
 }
+
 function sendFilm() {
-    const id = document.getElementById('id').value
+    const id = document.getElementById('id').value;
     const film = {
         title: document.getElementById('title').value,
-        title_ru: document.getElementById('title_ru').value, 
-        year: document.getElementById('year').value,
-        description: document.getElementById('description').value 
-    }
+        title_ru: document.getElementById('title_ru').value,
+        year: parseInt(document.getElementById('year').value), // Преобразуем в число
+        description: document.getElementById('description').value
+    };
 
-    const url = `/lab7/rest-api/films/${id}`;
-    const method = id === '' ? 'POST' : 'PUT';
+    const url = id ? `/lab7/rest-api/films/${id}` : '/lab7/rest-api/films/';
+    const method = id ? 'PUT' : 'POST';
 
     fetch(url, {
         method: method,
@@ -92,29 +99,39 @@ function sendFilm() {
         body: JSON.stringify(film)
     })
     .then(function(resp) {
-        if(resp.ok) {
+        if (resp.ok) {
             fillFilmList();
             hideModal();
+        } else {
+            return resp.json().then(errors => {
+                console.error('Ошибка сервера:', errors); // Логируем ошибку сервера
+                displayErrors(errors);
+            });
         }
-        return resp.json();
     })
-    .then(function(errors) {
-        if(errors.description)
-            document.getElementById('description-error').innerText = errors.description;
-    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+    });
+}
+
+function displayErrors(errors) {
+    if (errors.error) {
+        document.getElementById('description-error').innerText = errors.error;
+    }
 }
 
 function editFilm(id) {
     fetch(`/lab7/rest-api/films/${id}`)
-    .then(function (data) {
-        return data.json();
+    .then(function (response) {
+        return response.json();
     })
     .then(function (film) {
-        document.getElementById('id').value = id;
-        document.getElementById('title').value = film.title;
+        document.getElementById('id').value = film.id;
+        document.getElementById('title').value = film .title;
         document.getElementById('title_ru').value = film.title_ru;
         document.getElementById('year').value = film.year;
         document.getElementById('description').value = film.description;
         showModal();
     })
+    .catch(error => console.error('Ошибка при загрузке фильма для редактирования:', error));
 }
