@@ -54,13 +54,13 @@
             <ul>
                 <li><a href="/lab8/login">Войти</a></li>
                 <li><a href="/lab8/register">Регистрация</a></li>
-                <li><a href="/lab8/list">Список статей</a></li>
+                <li><a href="/lab8/articles">Список статей</a></li>
                 <li><a href="/lab8/create">Создать статью</a></li>
                 <li><a href="/lab8/logout">Выход</a></li>
             </ul>
         </div>
         <div class="user">
-            <p>Пользователь: {{ username if username else 'Anonymous' }}</p>
+            <p>Пользователь: {{ login if login else 'Anonymous' }}</p>
         </div>
     </div>
 {% endblock %}
