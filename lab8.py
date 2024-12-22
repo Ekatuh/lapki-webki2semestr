@@ -4,7 +4,7 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
-from os import path
+
 from datetime import datetime
 
 
@@ -14,3 +14,5 @@ lab8 = Blueprint('lab8', __name__, static_folder='static')
 def lab():
   username = session.get('login', '')
   return render_template('lab8/lab8.html', login=session.get('login'), username=username)
+
+
