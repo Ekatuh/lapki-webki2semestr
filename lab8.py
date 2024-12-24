@@ -79,10 +79,10 @@ def logout():
 def create_article():
     if request.method == 'POST':
         title = request.form.get('title')
-        article_text = request.form.get('content')  # Измените 'content' на 'article_text'
-        
-        # Создаем новую статью с использованием правильного имени поля
-        new_article = Article(title=title, article_text=article_text, login_id=current_user.id)
+        article_text = request.form.get('content')
+        is_public = request.form.get('is_public') == 'on'  # Получаем значение чекбокса
+
+        new_article = Article(title=title, article_text=article_text, login_id=current_user.id, is_public=is_public)
         
         db.session.add(new_article)
         db.session.commit()
@@ -92,7 +92,29 @@ def create_article():
 
 @lab8.route('/lab8/articles/')
 def article_list():
-    articles = Article.query.all()  # Извлекаем все статьи из базы данных
+    search_query = request.args.get('search')  # Получаем строку поиска из параметров запроса
+
+    if current_user.is_authenticated:
+        # Если пользователь авторизован, показываем все публичные статьи и непубличные статьи, созданные им
+        if search_query:
+            articles = Article.query.filter(
+                (Article.is_public == True) | (Article.login_id == current_user.id),
+                (Article.title.ilike(f'%{search_query}%') | Article.article_text.ilike(f'%{search_query}%'))
+            ).all()
+        else:
+            articles = Article.query.filter(
+                (Article.is_public == True) | (Article.login_id == current_user.id)
+            ).all()
+    else:
+        # Если пользователь не авторизован, показываем только публичные статьи
+        if search_query:
+            articles = Article.query.filter(
+                Article.is_public == True,
+                (Article.title.ilike(f'%{search_query}%') | Article.article_text.ilike(f'%{search_query}%'))
+            ).all()
+        else:
+            articles = Article.query.filter_by(is_public=True).all()
+
     for article in articles:
         article.user_login = User.query.get(article.login_id).login  # Получаем логин пользователя
     return render_template('lab8/article_list.html', articles=articles)
