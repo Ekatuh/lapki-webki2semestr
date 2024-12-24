@@ -19,7 +19,7 @@ from rgz import rgz
 app = Flask(__name__, static_folder='static')
 
 login_manager = LoginManager()
-login_manager.login_view = 'lab8.login'
+login_manager.login_view = 'lab8.login' 
 login_manager.init_app(app)
 @login_manager.user_loader
 def load_User(login_id):

@@ -37,7 +37,10 @@ def register():
                 new_user = User(login=login_form, password=password_hash)
                 db.session.add(new_user)
                 db.session.commit()
-                return redirect('/lab8/')
+                
+                login_user(new_user) 
+                session['login'] = new_user.login 
+                return redirect('/lab8/')  
 
     return render_template('lab8/register.html', error=error)
 
@@ -47,6 +50,7 @@ def login():
     if request.method == 'POST':
         login_form = request.form.get('login')
         password_form = request.form.get('password')
+        remember = request.form.get('remember')  # Получаем значение чекбокса
 
         if not login_form:
             error = 'Имя пользователя не должно быть пустым'
@@ -55,7 +59,7 @@ def login():
         else:
             user = User.query.filter_by(login=login_form).first()
             if user and check_password_hash(user.password, password_form):
-                login_user(user, remember=False)
+                login_user(user, remember=remember)  # Используем remember
                 session['login'] = user.login  # Сохраняем логин в сессии
                 return redirect('/lab8/')
             else:
@@ -63,14 +67,58 @@ def login():
 
     return render_template('lab8/login.html', error=error)
 
-@lab8.route('/lab8/articles/')
-@login_required
-def article_list():
-    return "Список статей"
-
 @lab8.route('/lab8/logout')
 @login_required
 def logout():
     logout_user()
-    session.pop('login', None)  # Удаляем логин из сессии
-    return redirect('/lab8/')  # Перенаправляем на главную страницу
+    session.pop('login', None) 
+    return redirect('/lab8/')  
+
+@lab8.route('/lab8/create', methods=['GET', 'POST'])
+@login_required
+def create_article():
+    if request.method == 'POST':
+        title = request.form.get('title')
+        article_text = request.form.get('content')  # Измените 'content' на 'article_text'
+        
+        # Создаем новую статью с использованием правильного имени поля
+        new_article = Article(title=title, article_text=article_text, login_id=current_user.id)
+        
+        db.session.add(new_article)
+        db.session.commit()
+        return redirect('/lab8/')
+    
+    return render_template('lab8/create_article.html')
+
+@lab8.route('/lab8/articles/')
+def article_list():
+    articles = Article.query.all()  # Извлекаем все статьи из базы данных
+    for article in articles:
+        article.user_login = User.query.get(article.login_id).login  # Получаем логин пользователя
+    return render_template('lab8/article_list.html', articles=articles)
+
+
+@lab8.route('/lab8/edit/<int:article_id>', methods=['GET', 'POST'])
+@login_required
+def edit_article(article_id):
+    article = Article.query.get_or_404(article_id)  # Получаем статью по ID
+
+    if request.method == 'POST':
+        title = request.form.get('title')
+        article_text = request.form.get('content')  # Получаем новое содержимое статьи
+
+        # Обновляем данные статьи
+        article.title = title
+        article.article_text = article_text
+        db.session.commit()  # Сохраняем изменения в базе данных
+        return redirect('/lab8/articles/')  # Перенаправляем на страницу списка статей
+
+    return render_template('lab8/edit_article.html', article=article)
+
+@lab8.route('/lab8/delete/<int:article_id>', methods=['POST'])
+@login_required
+def delete_article(article_id):
+    article = Article.query.get_or_404(article_id)  # Получаем статью по ID
+    db.session.delete(article)  # Удаляем статью из сессии
+    db.session.commit()  # Сохраняем изменения в базе данных
+    return redirect('/lab8/articles/') 

@@ -1,0 +1,68 @@
+<style>
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        text-align: center;
+        color: #28a745;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    input[type="text"],
+    textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    button:hover {
+        background-color: #218838;
+    }
+</style>
+
+{% extends "base.html" %}
+
+{% block main %}
+    <h1>Создание статьи</h1>
+    <form action="{{ url_for('lab8.create_article') }}" method="post">
+        <div>
+            <label>
+                Заголовок: <input type="text" name="title" required>
+            </label>
+        </div>
+        <div>
+            <label>
+                Содержимое: <textarea name="content" required></textarea>
+            </label>
+        </div>
+        <button type="submit">Создать статью</button>
+    </form>
+{% endblock %}

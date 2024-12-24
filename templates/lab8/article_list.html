@@ -1,0 +1,91 @@
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h1 {
+        color: #28a745; /* Зеленый цвет для заголовка */
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    ul {
+        list-style-type: none; /* Убираем маркеры списка */
+        padding: 0; /* Убираем отступы */
+    }
+
+    li {
+        background-color: #fff; /* Белый фон для каждой статьи */
+        border: 1px solid #ddd; /* Светло-серая рамка */
+        border-radius: 5px; /* Закругленные углы */
+        padding: 15px; /* Отступы внутри статьи */
+        margin-bottom: 15px; /* Отступ между статьями */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Легкая тень */
+    }
+
+    h2 {
+        color: #333; /* Темный цвет для заголовка статьи */
+        margin: 0 0 10px; /* Отступы для заголовка статьи */
+    }
+
+    p {
+        color: #555; /* Серый цвет для текста статьи */
+        line-height: 1.5; /* Высота строки для удобства чтения */
+    }
+
+    strong {
+        color: #333; /* Цвет для выделенного текста */
+    }
+
+    .button-container {
+        margin-top: 10px; /* Отступ сверху для кнопок */
+    }
+
+    .edit-button, .delete-button {
+        background-color: #007bff; /* Синий цвет для кнопки редактирования */
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 5px 10px;
+        cursor: pointer;
+        text-decoration: none; /* Убираем подчеркивание */
+        margin-right: 5px; /* Отступ между кнопками */
+    }
+
+    .delete-button {
+        background-color: #dc3545; /* Красный цвет для кнопки удаления */
+    }
+
+    .edit-button:hover, .delete-button:hover {
+        opacity: 0.8; /* Эффект при наведении */
+    }
+</style>
+
+{% extends "base.html" %}
+
+{% block main %}
+    <h1>Список статей</h1>
+
+    {% if articles %}
+        <ul>
+            {% for article in articles %}
+                <li>
+                    <h2>{{ article.title }}</h2>
+                    <p>{{ article.article_text }}</p>
+                    <p><strong>Автор:</strong> {{ article.user_login }}</p>  <!-- Используем логин пользователя -->
+                    <div class="button-container">
+                        <a href="{{ url_for('lab8.edit_article', article_id=article.id) }}" class="edit-button">Редактировать</a>
+                        <form action="{{ url_for('lab8.delete_article', article_id=article.id) }}" method="post" style="display:inline;">
+                            <button type="submit" class="delete-button">Удалить</button>
+                        </form>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Нет доступных статей.</p>
+    {% endif %}
+{% endblock %}
