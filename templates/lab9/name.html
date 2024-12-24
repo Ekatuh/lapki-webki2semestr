@@ -70,38 +70,46 @@
     h1 {
         font-size: 3em;
         margin-bottom: 20px;
-        color: #d60000; /* Золотой цвет */
+        color: #d60000; /* Красный цвет */
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
     }
 
-    .greeting {
-        font-size: 1.5em;
-        margin-bottom: 30px;
+    h2 {
+        font-size: 2em;
+        margin-bottom: 20px;
         color: #fff; /* Белый цвет */
-        text-shadow: 1px 1px 3px rgba(0, 0,  0, 0.5);
     }
 
-    .menu {
-        list-style: none;
-        padding: 0;
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
-    .menu li {
-        margin: 15px 0;
+    input[type="text"] {
+        padding: 10px;
+        border-radius : 5px;
+        border: none;
+        margin-bottom: 15px;
+        width: 80%;
+        max-width: 300px;
+        font-size: 1em;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     }
 
-    .menu a {
-        text-decoration: none;
+    button {
+        background-color: #b00000; /* Красный цвет */
         color: #fff;
-        background-color: #b00000; /* Зеленый цвет */
-        padding: 15px 30px;
+        padding: 10px 20px;
+        border: none;
         border-radius: 5px;
+        cursor: pointer;
         transition: background-color 0.3s, transform 0.3s;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        font-size: 1em;
     }
 
-    .menu a:hover {
-        background-color: #ff0000; /* Темнее зеленый при наведении */
+    button:hover {
+        background-color: #ff0000; /* Темнее красный при наведении */
         transform: scale(1.05);
     }
 </style>
@@ -109,16 +117,13 @@
 
 {% block lab %}Лабораторная работа 9{% endblock %}
 
-{% block script %}
-
-{% endblock %}
-
 {% block main %}
     <div class="container">
-        <h1>С Новым Годом!</h1>
-        <p class="greeting">Пусть этот год принесет вам счастье, здоровье и удачу!</p>
-        <ul class="menu">
-            <li><a href="/lab9/name">Начать создание открытки</a></li>
-        </ul>
+
+        <h1>Введите ваше имя</h1>
+        <form method="post">
+            <input type="text" name="name" required placeholder="Ваше имя">
+            <button type="submit">Далее</button>
+        </form>
     </div>
 {% endblock %}

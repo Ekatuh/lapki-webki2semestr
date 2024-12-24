@@ -1,0 +1,99 @@
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-image: url('https://i.pinimg.com/736x/a8/51/48/a8514869c0d12057840f09156a8066d0.jpg'); /* Замените на URL вашего фона */
+        background-size: cover;
+        background-position: center;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column; 
+        align-items: center;
+        min-height: 100vh; /* Минимальная высота 100% от высоты экрана */
+        text-align: center;
+        overflow: auto; /* Позволяет прокручивать содержимое */
+    }
+
+    .container {
+        width: 100%;
+        max-width: 800px; /* Максимальная ширина контейнера */
+        margin-top: 20px; /* Отступ сверху для контейнера */
+        background-color: rgba(255, 109, 109, 0.8); /* Полупрозрачный красный фон */
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        animation: slideIn 0.5s ease-in-out;
+    }
+
+    header {
+        background-color: rgba(0, 0, 0, 0.7); /* Полупрозрачный черный фон для заголовка */
+        width: 100%;
+        padding: 20px;
+        position: relative; /* Относительное положение для заголовка */
+        z-index: 1000; /* Убедитесь, что заголовок выше других элементов */
+    }
+
+    .header-title {
+        margin: 0;
+        color: #FFD700; /* Золотой цвет */
+        text-align: center;
+        font-size: 2em;
+    }
+
+    .nav-menu {
+        list-style: none;
+        padding: 0;
+        text-align: center;
+    }
+
+    .nav-menu li {
+        display: inline; /* Горизонтальное расположение */
+        margin: 0 15px; /* Отступы между элементами */
+    }
+
+    .nav-menu a {
+        color: #fff; /* Белый цвет текста */
+        text-decoration: none; /* Убираем подчеркивание */
+        transition: color 0.3s; /* Плавный переход цвета */
+    }
+
+    .nav-menu a:hover {
+        color: #FFD700; /* Золотой цвет при наведении */
+    }
+
+    .content {
+        margin-top: 20px; /* Отступ сверху для контента */
+    }
+
+    h1 {
+        font-size: 3em;
+        margin-bottom: 20px;
+        color: #d60000; /* Красный цвет */
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    }
+
+    p {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+        color: #fff; /* Белый цвет текста */
+    }
+
+    .gift-image {
+        max-width: 100%; /* Ограничиваем ширину изображения */
+        height: 400px; /* Автоматическая высота для сохранения пропорций */
+        border-radius: 10px; /* Закругленные углы для изображения */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Тень для изображения */
+    }
+</style>
+{% extends "base.html" %}
+
+{% block main %}
+<div class="container">
+    <div class="content">
+        <h1>{{ greeting }}</h1>
+        <p>{{ gift }}</p>
+        <img src="{{ url_for('lab9.static', filename=image) }}" alt="Подарок" class="gift-image">
+    </div>
+</div>
+{% endblock %}
