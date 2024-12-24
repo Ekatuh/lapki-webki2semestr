@@ -85,4 +85,18 @@ def congratulation():
             gift = "Вот тебе подарок — набор для творчества."
             image = "craft.jpg"  # Путь к картинке с набором для творчества
 
+    # Сохраняем данные в сессии
+    session['greeting'] = greeting
+    session['gift'] = gift
+    session['image'] = image
+
     return render_template('lab9/congratulation.html', greeting=greeting, gift=gift, image=image)
+
+
+
+@lab9.route('/lab9/reset', methods=['POST'])
+def reset():
+    session.pop('greeting', None)
+    session.pop('gift', None)
+    session.pop('image', None)
+    return redirect(url_for('lab9.get_name')) 

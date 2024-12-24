@@ -94,6 +94,11 @@
         <h1>{{ greeting }}</h1>
         <p>{{ gift }}</p>
         <img src="{{ url_for('lab9.static', filename=image) }}" alt="Подарок" class="gift-image">
+        <form method="POST" action="{{ url_for('lab9.reset') }}">
+            <button type="submit" style="padding: 10px 20px; border: none; border-radius: 5px; background-color: #bf0000; color: #fff; font-size: 1em; cursor: pointer; transition: background-color 0.3s;">
+                Сбросить данные
+            </button>
+        </form>
     </div>
 </div>
 {% endblock %}
